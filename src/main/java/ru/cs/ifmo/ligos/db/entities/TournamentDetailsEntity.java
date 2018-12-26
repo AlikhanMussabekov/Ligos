@@ -1,40 +1,36 @@
 package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "tournament_details", schema = "public", catalog = "ligos")
-public class TournamentDetailsEntity {
+public class TournamentDetailsEntity implements Serializable {
 	@Id
 	@Column(name = "id", nullable = false)
 	private Integer id;
 
-	@Basic
-	@Column(name = "age_categoryid", nullable = false,insertable = false, updatable = false)
-	private Integer ageCategoryid;
-
-	@Basic
-	@Column(name = "tournamentid", nullable = false)
-	private Integer tournamentid;
-
-	@Basic
 	@Column(name = "price", nullable = false)
 	private Integer price;
 
-	@Basic
 	@Column(name = "max_teams_count", nullable = false)
 	private Integer maxTeamsCount;
 
 	@ManyToOne
-	@JoinColumn(name = "age_categoryid", referencedColumnName = "id", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "age_categoryid", referencedColumnName = "id", nullable = false)
 	private AgeCategoryEntity ageCategoryByAgeCategoryid;
 
 	@ManyToOne
-	@JoinColumn(name = "tournamentid", referencedColumnName = "id", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "tournamentid", referencedColumnName = "id", nullable = false)
 	private TournamentEntity tournamentByTournamentid;
 
-	@OneToOne(mappedBy = "tournamentDetailsByTournamentDetailsid")
+	/*@OneToOne(mappedBy = "tournamentDetailsByTournamentDetailsid")
 	private TournamentTeamsEntity tournamentTeamsById;
+*/
+
+	@ManyToMany(mappedBy = "tournamentDetails")
+	private Set<TeamEntity> teams;
 
 	public Integer getId() {
 		return id;
@@ -42,22 +38,6 @@ public class TournamentDetailsEntity {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Integer getAgeCategoryid() {
-		return ageCategoryid;
-	}
-
-	public void setAgeCategoryid(Integer ageCategoryid) {
-		this.ageCategoryid = ageCategoryid;
-	}
-
-	public Integer getTournamentid() {
-		return tournamentid;
-	}
-
-	public void setTournamentid(Integer tournamentid) {
-		this.tournamentid = tournamentid;
 	}
 
 	public Integer getPrice() {
@@ -76,7 +56,6 @@ public class TournamentDetailsEntity {
 		this.maxTeamsCount = maxTeamsCount;
 	}
 
-
 	public AgeCategoryEntity getAgeCategoryByAgeCategoryid() {
 		return ageCategoryByAgeCategoryid;
 	}
@@ -93,11 +72,11 @@ public class TournamentDetailsEntity {
 		this.tournamentByTournamentid = tournamentByTournamentid;
 	}
 
-	public TournamentTeamsEntity getTournamentTeamsById() {
-		return tournamentTeamsById;
+	public Set<TeamEntity> getTeams() {
+		return teams;
 	}
 
-	public void setTournamentTeamsById(TournamentTeamsEntity tournamentTeamsById) {
-		this.tournamentTeamsById = tournamentTeamsById;
+	public void setTeams(Set<TeamEntity> teams) {
+		this.teams = teams;
 	}
 }

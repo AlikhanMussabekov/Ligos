@@ -1,94 +1,72 @@
 package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Collection;
 
 @Entity
 @Table(name = "organization", schema = "public", catalog = "ligos")
-public class OrganizationEntity {
+public class OrganizationEntity implements Serializable {
 	@Id
 	@Column(name = "id", nullable = false)
 	private Integer id;
 
-	@Basic
-	@Column(name = "email", nullable = false, length = 254)
+	@Column(name = "email", unique = true, nullable = false, length = 254)
 	private String email;
 
-	@Basic
 	@Column(name = "password", nullable = false, length = 255)
 	private String password;
 
-	@Basic
 	@Column(name = "name", nullable = true, length = 255)
 	private String name;
 
-	@Basic
 	@Column(name = "photo", nullable = true, length = -1)
 	private String photo;
 
-	@Basic
 	@Column(name = "type", nullable = true, length = 4)
 	private String type;
 
-	@Basic
-	@Column(name = "iin", nullable = true, length = 10)
+	@Column(name = "iin",unique = true,nullable = true, length = 10)
 	private String iin;
 
-	@Basic
-	@Column(name = "kpp", nullable = true, length = 9)
+	@Column(name = "kpp",unique = true, nullable = true, length = 9)
 	private String kpp;
 
-	@Basic
-	@Column(name = "ogrn", nullable = true, length = 13)
+	@Column(name = "ogrn", unique = true,nullable = true, length = 13)
 	private String ogrn;
 
-	@Basic
 	@Column(name = "ogrn_date", nullable = true)
 	private Timestamp ogrnDate;
 
-	@Basic
-	@Column(name = "ogrnip", nullable = true, length = 15)
+	@Column(name = "ogrnip",unique = true, nullable = true, length = 15)
 	private String ogrnip;
 
-	@Basic
 	@Column(name = "ogrnip_date", nullable = true)
 	private Timestamp ogrnipDate;
 
-	@Basic
 	@Column(name = "bik", nullable = true, length = 9)
 	private String bik;
 
-	@Basic
 	@Column(name = "bank_name", nullable = true, length = 255)
 	private String bankName;
 
-	@Basic
 	@Column(name = "korr_bill", nullable = true, length = 20)
 	private String korrBill;
 
-	@Basic
 	@Column(name = "payment_bill", nullable = true, length = 20)
 	private String paymentBill;
 
-	@Basic
-	@Column(name = "legal_address", nullable = false)
-	private Integer legalAddress;
-
-	@Basic
-	@Column(name = "actual_address", nullable = false)
-	private Integer actualAddress;
-
-	@OneToMany(mappedBy = "organizationByOrganizationid")
-	private Collection<CourtEntity> courtsById;
-
 	@ManyToOne
-	@JoinColumn(name = "legal_address", referencedColumnName = "id", nullable = false,insertable = false, updatable = false)
+	@JoinColumn(name = "legal_address", referencedColumnName = "id", nullable = false)
 	private AddressEntity addressByLegalAddress;
 
 	@ManyToOne
-	@JoinColumn(name = "actual_address", referencedColumnName = "id", nullable = false,insertable = false, updatable = false)
+	@JoinColumn(name = "actual_address", referencedColumnName = "id", nullable = false)
 	private AddressEntity addressByActualAddress;
+
+	@OneToMany(mappedBy = "organizationByOrganizationid")
+	private Collection<CourtEntity> courtsById;
 
 	@OneToMany(mappedBy = "organizationByOrganizationid")
 	private Collection<SectionEntity> sectionsById;
@@ -223,23 +201,6 @@ public class OrganizationEntity {
 	public void setPaymentBill(String paymentBill) {
 		this.paymentBill = paymentBill;
 	}
-
-	public Integer getLegalAddress() {
-		return legalAddress;
-	}
-
-	public void setLegalAddress(Integer legalAddress) {
-		this.legalAddress = legalAddress;
-	}
-
-	public Integer getActualAddress() {
-		return actualAddress;
-	}
-
-	public void setActualAddress(Integer actualAddress) {
-		this.actualAddress = actualAddress;
-	}
-
 
 	public Collection<CourtEntity> getCourtsById() {
 		return courtsById;

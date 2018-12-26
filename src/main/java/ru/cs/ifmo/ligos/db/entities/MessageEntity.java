@@ -1,34 +1,25 @@
 package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "message", schema = "public", catalog = "ligos")
-public class MessageEntity {
+public class MessageEntity implements Serializable {
 	@Id
 	@Column(name = "id", nullable = false)
 	private Integer id;
 
-	@Basic
-	@Column(name = "chatid", nullable = false)
-	private Integer chatid;
-
-	@Basic
-	@Column(name = "context", nullable = false, length = -1)
+	@Column(name = "context", nullable = false)
 	private String context;
 
-	@Basic
 	@Column(name = "time", nullable = false)
 	private Timestamp time;
 
-	@Basic
-	@Column(name = "type", nullable = false)
-	private Boolean type;
-
 	@ManyToOne
-	@JoinColumn(name = "chatid", referencedColumnName = "id", nullable = false,insertable = false, updatable = false)
-	private ChatEntity chatByChatid;
+	@JoinColumn(name = "chatid", referencedColumnName = "id")
+	private ChatEntity chatid;
 
 	public Integer getId() {
 		return id;
@@ -36,14 +27,6 @@ public class MessageEntity {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Integer getChatid() {
-		return chatid;
-	}
-
-	public void setChatid(Integer chatid) {
-		this.chatid = chatid;
 	}
 
 	public String getContext() {
@@ -62,19 +45,11 @@ public class MessageEntity {
 		this.time = time;
 	}
 
-	public Boolean getType() {
-		return type;
-	}
-
-	public void setType(Boolean type) {
-		this.type = type;
-	}
-
 	public ChatEntity getChatByChatid() {
-		return chatByChatid;
+		return chatid;
 	}
 
-	public void setChatByChatid(ChatEntity chatByChatid) {
-		this.chatByChatid = chatByChatid;
+	public void setChatByChatid(ChatEntity chatid) {
+		this.chatid = chatid;
 	}
 }

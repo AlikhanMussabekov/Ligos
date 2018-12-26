@@ -1,45 +1,22 @@
 package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "section_users", schema = "public", catalog = "ligos")
-public class SectionUsersEntity {
+public class SectionUsersEntity implements Serializable {
 	@Id
-	@Column(name = "section_detailsid", nullable = false)
-	private Integer sectionDetailsid;
-
-	@Basic
-	@Column(name = "userid", nullable = false)
-	private Integer userid;
-
-	@Basic
-	@Column(name = "present", nullable = false)
-	private Boolean present;
-
 	@OneToOne
-	@JoinColumn(name = "section_detailsid", referencedColumnName = "id", nullable = false,insertable = false, updatable = false)
+	@JoinColumn(name = "section_detailsid", referencedColumnName = "id", nullable = false)
 	private SectionDetailsEntity sectionDetailsBySectionDetailsid;
 
 	@ManyToOne
-	@JoinColumn(name = "userid", referencedColumnName = "id", nullable = false,insertable = false, updatable = false)
+	@JoinColumn(name = "userid", referencedColumnName = "id", nullable = false)
 	private UserEntity userByUserid;
 
-	public Integer getSectionDetailsid() {
-		return sectionDetailsid;
-	}
-
-	public void setSectionDetailsid(Integer sectionDetailsid) {
-		this.sectionDetailsid = sectionDetailsid;
-	}
-
-	public Integer getUserid() {
-		return userid;
-	}
-
-	public void setUserid(Integer userid) {
-		this.userid = userid;
-	}
+	@Column(name = "present", nullable = false)
+	private Boolean present;
 
 	public Boolean getPresent() {
 		return present;

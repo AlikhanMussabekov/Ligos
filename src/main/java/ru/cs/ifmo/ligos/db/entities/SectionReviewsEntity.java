@@ -1,55 +1,30 @@
 package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "section_reviews", schema = "public", catalog = "ligos")
-public class SectionReviewsEntity {
+public class SectionReviewsEntity implements Serializable {
 
 	@Id
-	@Column(name = "userid", nullable = false)
-	private Integer userid;
-
-	@Basic
-	@Column(name = "sectionid", nullable = false)
-	private Integer sectionid;
-
-	@Basic
-	@Column(name = "review", nullable = false, length = -1)
-	private String review;
-
-	@Basic
-	@Column(name = "raiting", nullable = false)
-	private Short raiting;
-
-	@Basic
-	@Column(name = "DATE", nullable = false)
-	private Timestamp date;
-
 	@OneToOne
-	@JoinColumn(name = "userid", referencedColumnName = "id", nullable = false,insertable = false, updatable = false)
+	@JoinColumn(name = "userid", referencedColumnName = "id")
 	private UserEntity userByUserid;
 
 	@ManyToOne
-	@JoinColumn(name = "sectionid", referencedColumnName = "id", nullable = false,insertable = false, updatable = false)
+	@JoinColumn(name = "sectionid", referencedColumnName = "id", nullable = false)
 	private SectionEntity sectionBySectionid;
 
-	public Integer getUserid() {
-		return userid;
-	}
+	@Column(name = "review", nullable = false, length = -1)
+	private String review;
 
-	public void setUserid(Integer userid) {
-		this.userid = userid;
-	}
+	@Column(name = "raiting", nullable = false)
+	private Short raiting;
 
-	public Integer getSectionid() {
-		return sectionid;
-	}
-
-	public void setSectionid(Integer sectionid) {
-		this.sectionid = sectionid;
-	}
+	@Column(name = "date", nullable = false)
+	private Timestamp date;
 
 	public String getReview() {
 		return review;

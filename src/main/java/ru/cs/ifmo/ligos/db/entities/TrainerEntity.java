@@ -1,20 +1,22 @@
 package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Table(name = "trainer", schema = "public", catalog = "ligos")
-public class TrainerEntity {
+public class TrainerEntity implements Serializable {
 	@Id
-	@Column(name = "userid", nullable = false)
-	private Integer userid;
+	@OneToOne
+	@JoinColumn(name = "userid", referencedColumnName = "id")
+	private UserEntity userByUserid;
 
-	@Basic
-	@Column(name = "organizationid", nullable = false)
-	private Integer organizationid;
+	@ManyToOne
+	@JoinColumn(name = "organizationid", referencedColumnName = "id", nullable = false)
+	private OrganizationEntity organizationByOrganizationid;
 
-	@Basic
 	@Column(name = "raiting", nullable = false)
 	private Short raiting;
 
@@ -24,32 +26,9 @@ public class TrainerEntity {
 	@OneToMany(mappedBy = "trainerByTrainerid")
 	private Collection<TeamEntity> teamsByUserid;
 
-	@OneToOne
-	@JoinColumn(name = "userid", referencedColumnName = "id", nullable = false,insertable = false, updatable = false)
-	private UserEntity userByUserid;
-
-	@ManyToOne
-	@JoinColumn(name = "organizationid", referencedColumnName = "id", nullable = false,insertable = false, updatable = false)
-	private OrganizationEntity organizationByOrganizationid;
-
-	@OneToOne(mappedBy = "trainerByTraineruserid")
-	private TrainerReviewsEntity trainerReviewsByUserid;
-
-	public Integer getUserid() {
-		return userid;
-	}
-
-	public void setUserid(Integer userid) {
-		this.userid = userid;
-	}
-
-	public Integer getOrganizationid() {
-		return organizationid;
-	}
-
-	public void setOrganizationid(Integer organizationid) {
-		this.organizationid = organizationid;
-	}
+	//todo
+	@OneToMany(mappedBy = "trainerByTraineruserid")
+	private Set<TrainerReviewsEntity> trainerReviews;
 
 	public Short getRaiting() {
 		return raiting;
@@ -92,11 +71,11 @@ public class TrainerEntity {
 		this.organizationByOrganizationid = organizationByOrganizationid;
 	}
 
-	public TrainerReviewsEntity getTrainerReviewsByUserid() {
-		return trainerReviewsByUserid;
+	public Set<TrainerReviewsEntity> getTrainerReviews() {
+		return trainerReviews;
 	}
 
-	public void setTrainerReviewsByUserid(TrainerReviewsEntity trainerReviewsByUserid) {
-		this.trainerReviewsByUserid = trainerReviewsByUserid;
+	public void setTrainerReviews(Set<TrainerReviewsEntity> trainerReviews) {
+		this.trainerReviews = trainerReviews;
 	}
 }

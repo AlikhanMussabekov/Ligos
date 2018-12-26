@@ -1,22 +1,21 @@
 package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "age_category", schema = "public", catalog = "ligos")
-public class AgeCategoryEntity {
+public class AgeCategoryEntity implements Serializable {
 
 	@Id
 	@Column(name = "id", nullable = false)
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@Basic
 	@Column(name = "FROM", nullable = false)
 	private Integer from;
 
-	@Basic
 	@Column(name = "TO", nullable = false)
 	private Integer to;
 

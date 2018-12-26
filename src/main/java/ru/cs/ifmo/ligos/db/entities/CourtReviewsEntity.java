@@ -1,38 +1,25 @@
 package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "court_reviews", schema = "public", catalog = "ligos")
-public class CourtReviewsEntity {
+public class CourtReviewsEntity implements Serializable {
 	@Id
-	@Column(name = "courtid", nullable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer courtid;
+	@OneToOne
+	@JoinColumn(name = "courtid", referencedColumnName = "id", nullable = false)
+	private CourtEntity courtByCourtid;
 
-	@Basic
 	@Column(name = "review", nullable = false, length = -1)
 	private String review;
 
-	@Basic
 	@Column(name = "raiting", nullable = false)
 	private Short raiting;
 
-	@Basic
 	@Column(name = "DATE", nullable = false)
 	private Timestamp date;
-
-	@OneToOne
-	@JoinColumn(name = "courtid", referencedColumnName = "id", nullable = false,insertable = false, updatable = false)
-	private CourtEntity courtByCourtid;
-
-	public Integer getCourtid() {
-		return courtid;
-	}
-	public void setCourtid(Integer courtid) {
-		this.courtid = courtid;
-	}
 
 	public String getReview() {
 		return review;

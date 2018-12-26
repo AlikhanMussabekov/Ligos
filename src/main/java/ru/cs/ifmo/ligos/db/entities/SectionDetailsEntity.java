@@ -1,54 +1,39 @@
 package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "section_details", schema = "public", catalog = "ligos")
-public class SectionDetailsEntity {
+public class SectionDetailsEntity implements Serializable {
 	@Id
 	@Column(name = "id", nullable = false)
 	private Integer id;
 
-	@Basic
-	@Column(name = "age_categoryid", nullable = false)
-	private Integer ageCategoryid;
-
-	@Basic
-	@Column(name = "sectionid", nullable = false)
-	private Integer sectionid;
-
-	@Basic
-	@Column(name = "trainerid", nullable = false)
-	private Integer trainerid;
-
-	@Basic
-	@Column(name = "price", nullable = false)
-	private Integer price;
-
-	@Basic
-	@Column(name = "time_start", nullable = false)
-	private Timestamp timeStart;
-
-	@Basic
-	@Column(name = "time_end", nullable = false)
-	private Timestamp timeEnd;
-
-	@Basic
-	@Column(name = "max_users_count", nullable = false)
-	private Integer maxUsersCount;
-
 	@ManyToOne
-	@JoinColumn(name = "age_categoryid", referencedColumnName = "id", nullable = false,insertable = false, updatable = false)
+	@JoinColumn(name = "age_categoryid", referencedColumnName = "id", nullable = false)
 	private AgeCategoryEntity ageCategoryByAgeCategoryid;
 
 	@ManyToOne
-	@JoinColumn(name = "sectionid", referencedColumnName = "id", nullable = false,insertable = false, updatable = false)
+	@JoinColumn(name = "sectionid", referencedColumnName = "id", nullable = false)
 	private SectionEntity sectionBySectionid;
 
 	@ManyToOne
-	@JoinColumn(name = "trainerid", referencedColumnName = "userid", nullable = false,insertable = false, updatable = false)
+	@JoinColumn(name = "trainerid", referencedColumnName = "userid", nullable = false)
 	private TrainerEntity trainerByTrainerid;
+
+	@Column(name = "price", nullable = false)
+	private Integer price;
+
+	@Column(name = "time_start", nullable = false)
+	private Timestamp timeStart;
+
+	@Column(name = "time_end", nullable = false)
+	private Timestamp timeEnd;
+
+	@Column(name = "max_users_count", nullable = false)
+	private Integer maxUsersCount;
 
 	@OneToOne(mappedBy = "sectionDetailsBySectionDetailsid")
 	private SectionUsersEntity sectionUsersById;
@@ -59,30 +44,6 @@ public class SectionDetailsEntity {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Integer getAgeCategoryid() {
-		return ageCategoryid;
-	}
-
-	public void setAgeCategoryid(Integer ageCategoryid) {
-		this.ageCategoryid = ageCategoryid;
-	}
-
-	public Integer getSectionid() {
-		return sectionid;
-	}
-
-	public void setSectionid(Integer sectionid) {
-		this.sectionid = sectionid;
-	}
-
-	public Integer getTrainerid() {
-		return trainerid;
-	}
-
-	public void setTrainerid(Integer trainerid) {
-		this.trainerid = trainerid;
 	}
 
 	public Integer getPrice() {

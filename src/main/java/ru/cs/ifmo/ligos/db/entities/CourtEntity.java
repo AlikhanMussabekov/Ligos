@@ -1,46 +1,36 @@
 package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "court", schema = "public", catalog = "ligos")
-public class CourtEntity {
+public class CourtEntity implements Serializable {
 	@Id
 	@Column(name = "id", nullable = false)
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@Basic
-	@Column(name = "organizationid", nullable = false)
-	private Integer organizationid;
-
-	@Basic
 	@Column(name = "name", nullable = false, length = 255)
 	private String name;
 
-	@Basic
 	@Column(name = "description", nullable = false, length = -1)
 	private String description;
 
-	@Basic
 	@Column(name = "photos", nullable = false, length = -1)
+	//Nope
 	private String photos;
 
-	@Basic
-	@Column(name = "addressid", nullable = false)
-	private Integer addressid;
-
-	@Basic
 	@Column(name = "raiting", nullable = false)
 	private Short raiting;
 
 	@ManyToOne
-	@JoinColumn(name = "organizationid", referencedColumnName = "id", nullable = false,insertable = false, updatable = false)
+	@JoinColumn(name = "organizationid", referencedColumnName = "id", nullable = false)
 	private OrganizationEntity organizationByOrganizationid;
 
 	@ManyToOne
-	@JoinColumn(name = "addressid", referencedColumnName = "id", nullable = false,insertable = false, updatable = false)
+	@JoinColumn(name = "addressid", referencedColumnName = "id", nullable = false)
 	private AddressEntity addressByAddressid;
 
 	@OneToOne(mappedBy = "courtByCourtid")
@@ -57,13 +47,6 @@ public class CourtEntity {
 	}
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Integer getOrganizationid() {
-		return organizationid;
-	}
-	public void setOrganizationid(Integer organizationid) {
-		this.organizationid = organizationid;
 	}
 
 	public String getName() {
@@ -85,13 +68,6 @@ public class CourtEntity {
 	}
 	public void setPhotos(String photos) {
 		this.photos = photos;
-	}
-
-	public Integer getAddressid() {
-		return addressid;
-	}
-	public void setAddressid(Integer addressid) {
-		this.addressid = addressid;
 	}
 
 	public Short getRaiting() {

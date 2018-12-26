@@ -13,23 +13,18 @@ public class AddressEntity implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@Basic
 	@Column(name = "country", nullable = false, length = 255)
 	private String country;
 
-	@Basic
 	@Column(name = "state", nullable = false, length = 255)
 	private String state;
 
-	@Basic
 	@Column(name = "zip_code", nullable = false, length = 255)
 	private String zipCode;
 
-	@Basic
 	@Column(name = "city", nullable = false, length = 255)
 	private String city;
 
-	@Basic
 	@Column(name = "street", nullable = false, length = 255)
 	private String street;
 

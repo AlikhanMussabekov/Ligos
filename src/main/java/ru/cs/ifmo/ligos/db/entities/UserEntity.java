@@ -1,67 +1,62 @@
 package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Set;
 
 @Entity
-@Table(name = "USER", schema = "public", catalog = "ligos")
-public class UserEntity {
+@Table(name = "users", schema = "public", catalog = "ligos")
+public class UserEntity implements Serializable {
 
 	@Id
+	@SequenceGenerator(name = "user_id_seq", sequenceName = "user_id_seq",allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
 	@Column(name = "id", nullable = false)
-	@GeneratedValue
 	private Integer id;
 
-	@Basic
-	@Column(name = "email", nullable = false, length = 254)
+	@Column(name = "email", unique = true,nullable = false, length = 254)
 	private String email;
 
-	@Basic
 	@Column(name = "password", nullable = false, length = 255)
 	private String password;
 
-	@Basic
 	@Column(name = "name", nullable = false, length = 255)
 	private String name;
 
-	@Basic
 	@Column(name = "surname", nullable = true, length = 255)
 	private String surname;
 
-	@Basic
 	@Column(name = "patronymic", nullable = true, length = 255)
 	private String patronymic;
 
-	@Basic
 	@Column(name = "phone_number", nullable = true, length = 11)
 	private String phoneNumber;
 
-	@Basic
 	@Column(name = "city", nullable = true, length = 255)
 	private String city;
 
-	@Basic
 	@Column(name = "gender", nullable = true, length = 7)
 	private String gender;
 
-	@Basic
 	@Column(name = "birthday", nullable = true)
 	private Timestamp birthday;
 
-	@Basic
-	@Column(name = "photo", nullable = true, length = -1)
-	private String photo;
+	@Column(name = "photo", nullable = true)
+	private byte[] photo;
 
-	@Basic
 	@Column(name = "raiting", nullable = true)
 	private Short raiting;
 
-	@OneToMany(mappedBy = "userByUserid")
+	/*@OneToMany(mappedBy = "userid")
 	private Collection<ChatEntity> chatsById;
-
-	@OneToMany(mappedBy = "userByUserid2")
-	private Collection<ChatEntity> chatsById_0;
+*/
+	@ManyToMany(cascade = {CascadeType.ALL})
+	@JoinTable(name = "chat_users",
+			joinColumns = { @JoinColumn(name = "usersid")},
+			inverseJoinColumns = { @JoinColumn(name = "chatid")})
+	private Set<ChatEntity> chats;
 
 	@OneToMany(mappedBy = "userByUserid")
 	private Collection<GoalsListEntity> goalsListsById;
@@ -75,8 +70,15 @@ public class UserEntity {
 	@OneToMany(mappedBy = "userByCaptainid")
 	private Collection<TeamEntity> teamsById;
 
-	@OneToMany(mappedBy = "userByUserid")
-	private Collection<TeamUserEntity> teamUsersById;
+	@ManyToMany(cascade = {CascadeType.ALL})
+	@JoinTable(name = "team_user",
+			joinColumns = { @JoinColumn(name = "usersid")},
+			inverseJoinColumns = { @JoinColumn(name = "teamid")})
+	private Set<ChatEntity> teams;
+
+	//DELETE
+	/*@OneToMany(mappedBy = "userByUserid")
+	private Collection<TeamUserEntity> teamUsersById;*/
 
 	@OneToOne(mappedBy = "userByUserid")
 	private TrainerEntity trainerById;
@@ -164,11 +166,11 @@ public class UserEntity {
 		this.birthday = birthday;
 	}
 
-	public String getPhoto() {
+	public byte[] getPhoto() {
 		return photo;
 	}
 
-	public void setPhoto(String photo) {
+	public void setPhoto(byte[] photo) {
 		this.photo = photo;
 	}
 
@@ -180,21 +182,12 @@ public class UserEntity {
 		this.raiting = raiting;
 	}
 
-
-	public Collection<ChatEntity> getChatsByIdFirst() {
-		return chatsById;
+	public Set<ChatEntity> getChats() {
+		return chats;
 	}
 
-	public void setChatsById(Collection<ChatEntity> chatsById) {
-		this.chatsById = chatsById;
-	}
-
-	public Collection<ChatEntity> getChatsByIdSecond() {
-		return chatsById_0;
-	}
-
-	public void setChatsById_0(Collection<ChatEntity> chatsById_0) {
-		this.chatsById_0 = chatsById_0;
+	public void setChats(Set<ChatEntity> chats) {
+		this.chats = chats;
 	}
 
 	public Collection<GoalsListEntity> getGoalsListsById() {
@@ -229,12 +222,12 @@ public class UserEntity {
 		this.teamsById = teamsById;
 	}
 
-	public Collection<TeamUserEntity> getTeamUsersById() {
-		return teamUsersById;
+	public Set<ChatEntity> getTeams() {
+		return teams;
 	}
 
-	public void setTeamUsersById(Collection<TeamUserEntity> teamUsersById) {
-		this.teamUsersById = teamUsersById;
+	public void setTeams(Set<ChatEntity> teams) {
+		this.teams = teams;
 	}
 
 	public TrainerEntity getTrainerById() {
@@ -252,6 +245,4 @@ public class UserEntity {
 	public void setTrainerReviewsById(Collection<TrainerReviewsEntity> trainerReviewsById) {
 		this.trainerReviewsById = trainerReviewsById;
 	}
-
-
 }

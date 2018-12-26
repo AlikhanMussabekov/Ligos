@@ -1,16 +1,16 @@
 package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "stages", schema = "public", catalog = "ligos")
-public class StagesEntity {
+public class StagesEntity implements Serializable {
 	@Id
 	@Column(name = "id", nullable = false)
 	private Integer id;
 
-	@Basic
 	@Column(name = "name", nullable = false, length = 255)
 	private String name;
 
