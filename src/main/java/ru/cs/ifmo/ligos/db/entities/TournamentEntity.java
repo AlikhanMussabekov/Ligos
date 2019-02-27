@@ -2,12 +2,13 @@ package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.util.Collection;
+import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "tournament", schema = "public", catalog = "ligos")
 public class TournamentEntity implements Serializable {
+
 	@Id
 	@Column(name = "id", nullable = false)
 	private Integer id;
@@ -15,24 +16,15 @@ public class TournamentEntity implements Serializable {
 	@Column(name = "name", nullable = false, length = 255)
 	private String name;
 
-	@Column(name = "description", nullable = false)
+	@Column(name = "description", nullable = false, length = -1)
 	private String description;
 
 	@Column(name = "DATE", nullable = false)
-	private Timestamp date;
+	private Date date;
 
-	@ManyToOne
-	@JoinColumn(name = "addressid", referencedColumnName = "id", nullable = false)
-	private AddressEntity addressByAddressid;
-
-	@OneToMany(mappedBy = "tournamentByTournamentid")
-	private Collection<MatchesEntity> matchesById;
-
-	@OneToMany(mappedBy = "tournamentByTournamentid")
-	private Collection<TournamentDetailsEntity> tournamentDetailsById;
-
-	@OneToOne(mappedBy = "tournamentByTournamentid")
-	private TournamentReviewsEntity tournamentReviewsById;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "addressid", nullable = false)
+	private AddressEntity addressid;
 
 	public Integer getId() {
 		return id;
@@ -58,43 +50,36 @@ public class TournamentEntity implements Serializable {
 		this.description = description;
 	}
 
-	public Timestamp getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(Timestamp date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 
-	public Collection<MatchesEntity> getMatchesById() {
-		return matchesById;
+	public AddressEntity getAddressid() {
+		return addressid;
 	}
 
-	public void setMatchesById(Collection<MatchesEntity> matchesById) {
-		this.matchesById = matchesById;
+	public void setAddressid(AddressEntity addressid) {
+		this.addressid = addressid;
 	}
 
-	public AddressEntity getAddressByAddressid() {
-		return addressByAddressid;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		TournamentEntity that = (TournamentEntity) o;
+		return Objects.equals(id, that.id) &&
+				Objects.equals(name, that.name) &&
+				Objects.equals(description, that.description) &&
+				Objects.equals(date, that.date) &&
+				Objects.equals(addressid, that.addressid);
 	}
 
-	public void setAddressByAddressid(AddressEntity addressByAddressid) {
-		this.addressByAddressid = addressByAddressid;
-	}
-
-	public Collection<TournamentDetailsEntity> getTournamentDetailsById() {
-		return tournamentDetailsById;
-	}
-
-	public void setTournamentDetailsById(Collection<TournamentDetailsEntity> tournamentDetailsById) {
-		this.tournamentDetailsById = tournamentDetailsById;
-	}
-
-	public TournamentReviewsEntity getTournamentReviewsById() {
-		return tournamentReviewsById;
-	}
-
-	public void setTournamentReviewsById(TournamentReviewsEntity tournamentReviewsById) {
-		this.tournamentReviewsById = tournamentReviewsById;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, name, description, date, addressid);
 	}
 }

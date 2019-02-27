@@ -10,10 +10,4 @@ import java.util.List;
 
 public interface SectionDetailsRepository extends JpaRepository<SectionDetailsEntity, Long> {
 
-	public List<SectionDetailsEntity>
-	findAllByAgeCategoryByAgeCategoryidAndPriceInAndTimeStartIn(
-			AgeCategoryEntity ageCategoryEntity,
-			Collection<Integer> price,
-			Collection<Timestamp> timestamp);
-
 }

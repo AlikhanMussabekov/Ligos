@@ -2,14 +2,20 @@ package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.Objects;
 
 @Entity
 @Table(name = "section", schema = "public", catalog = "ligos")
 public class SectionEntity implements Serializable {
+
 	@Id
 	@Column(name = "id", nullable = false)
 	private Integer id;
+
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "organizationid", nullable = false)
+	private OrganizationEntity organizationid;
 
 	@Column(name = "name", nullable = false, length = 255)
 	private String name;
@@ -17,22 +23,11 @@ public class SectionEntity implements Serializable {
 	@Column(name = "description", nullable = false, length = -1)
 	private String description;
 
-	@Column(name = "photo", nullable = false, length = -1)
-	private String photo;
+	@Column(name = "photo", nullable = false)
+	private byte[] photo;
 
-	@ManyToOne
-	@JoinColumn(name = "organizationid", referencedColumnName = "id", nullable = false)
-	private OrganizationEntity organizationByOrganizationid;
-
-	@ManyToOne
-	@JoinColumn(name = "addressid", referencedColumnName = "id", nullable = false)
-	private AddressEntity addressByAddressid;
-
-	@OneToMany(mappedBy = "sectionBySectionid")
-	private Collection<SectionDetailsEntity> sectionDetailsById;
-
-	@OneToMany(mappedBy = "sectionBySectionid")
-	private Collection<SectionReviewsEntity> sectionReviewsById;
+	@Column(name = "addressid", nullable = false)
+	private Integer addressid;
 
 	public Integer getId() {
 		return id;
@@ -40,6 +35,14 @@ public class SectionEntity implements Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public OrganizationEntity getOrganizationid() {
+		return organizationid;
+	}
+
+	public void setOrganizationid(OrganizationEntity organizationid) {
+		this.organizationid = organizationid;
 	}
 
 	public String getName() {
@@ -58,43 +61,39 @@ public class SectionEntity implements Serializable {
 		this.description = description;
 	}
 
-	public String getPhoto() {
+	public byte[] getPhoto() {
 		return photo;
 	}
 
-	public void setPhoto(String photo) {
+	public void setPhoto(byte[] photo) {
 		this.photo = photo;
 	}
 
-	public OrganizationEntity getOrganizationByOrganizationid() {
-		return organizationByOrganizationid;
+	public Integer getAddressid() {
+		return addressid;
 	}
 
-	public void setOrganizationByOrganizationid(OrganizationEntity organizationByOrganizationid) {
-		this.organizationByOrganizationid = organizationByOrganizationid;
+	public void setAddressid(Integer addressid) {
+		this.addressid = addressid;
 	}
 
-	public AddressEntity getAddressByAddressid() {
-		return addressByAddressid;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		SectionEntity that = (SectionEntity) o;
+		return Objects.equals(id, that.id) &&
+				Objects.equals(organizationid, that.organizationid) &&
+				Objects.equals(name, that.name) &&
+				Objects.equals(description, that.description) &&
+				Arrays.equals(photo, that.photo) &&
+				Objects.equals(addressid, that.addressid);
 	}
 
-	public void setAddressByAddressid(AddressEntity addressByAddressid) {
-		this.addressByAddressid = addressByAddressid;
-	}
-
-	public Collection<SectionDetailsEntity> getSectionDetailsById() {
-		return sectionDetailsById;
-	}
-
-	public void setSectionDetailsById(Collection<SectionDetailsEntity> sectionDetailsById) {
-		this.sectionDetailsById = sectionDetailsById;
-	}
-
-	public Collection<SectionReviewsEntity> getSectionReviewsById() {
-		return sectionReviewsById;
-	}
-
-	public void setSectionReviewsById(Collection<SectionReviewsEntity> sectionReviewsById) {
-		this.sectionReviewsById = sectionReviewsById;
+	@Override
+	public int hashCode() {
+		int result = Objects.hash(id, organizationid, name, description, addressid);
+		result = 31 * result + Arrays.hashCode(photo);
+		return result;
 	}
 }

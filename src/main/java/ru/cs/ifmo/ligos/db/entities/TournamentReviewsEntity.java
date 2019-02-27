@@ -2,15 +2,19 @@ package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "tournament_reviews", schema = "public", catalog = "ligos")
 public class TournamentReviewsEntity implements Serializable {
+
 	@Id
-	@OneToOne
-	@JoinColumn(name = "tournamentid", referencedColumnName = "id")
-	private TournamentEntity tournamentByTournamentid;
+	private Integer id;
+
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "tournamentid", nullable = false)
+	private TournamentEntity tournamentid;
 
 	@Column(name = "review", nullable = false, length = -1)
 	private String review;
@@ -19,7 +23,15 @@ public class TournamentReviewsEntity implements Serializable {
 	private Short raiting;
 
 	@Column(name = "DATE", nullable = false)
-	private Timestamp date;
+	private Date date;
+
+	public TournamentEntity getTournamentid() {
+		return tournamentid;
+	}
+
+	public void setTournamentid(TournamentEntity tournamentid) {
+		this.tournamentid = tournamentid;
+	}
 
 	public String getReview() {
 		return review;
@@ -37,20 +49,27 @@ public class TournamentReviewsEntity implements Serializable {
 		this.raiting = raiting;
 	}
 
-	public Timestamp getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(Timestamp date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 
-
-	public TournamentEntity getTournamentByTournamentid() {
-		return tournamentByTournamentid;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		TournamentReviewsEntity that = (TournamentReviewsEntity) o;
+		return Objects.equals(tournamentid, that.tournamentid) &&
+				Objects.equals(review, that.review) &&
+				Objects.equals(raiting, that.raiting) &&
+				Objects.equals(date, that.date);
 	}
 
-	public void setTournamentByTournamentid(TournamentEntity tournamentByTournamentid) {
-		this.tournamentByTournamentid = tournamentByTournamentid;
+	@Override
+	public int hashCode() {
+		return Objects.hash(tournamentid, review, raiting, date);
 	}
 }

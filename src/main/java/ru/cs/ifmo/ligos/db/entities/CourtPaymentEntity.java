@@ -2,65 +2,86 @@ package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "court_payment", schema = "public", catalog = "ligos")
 public class CourtPaymentEntity implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@OneToOne
-	@JoinColumn(name = "courtid", referencedColumnName = "id")
-	private CourtEntity courtByCourtid;
+	private Integer id;
+
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "courtid", nullable = false)
+	private CourtEntity courtid;
 
 	@Column(name = "price", nullable = false)
 	private Integer price;
 
 	@Column(name = "FROM", nullable = false)
-	//Change to java.util.date
-	private Timestamp from;
+	private Date from;
 
 	@Column(name = "TO", nullable = false)
-	private Timestamp to;
+	private Date to;
 
 	@Column(name = "status", nullable = false)
 	private Boolean status;
 
+	public CourtEntity getCourtid() {
+		return courtid;
+	}
+
+	public void setCourtid(CourtEntity courtid) {
+		this.courtid = courtid;
+	}
 
 	public Integer getPrice() {
 		return price;
 	}
+
 	public void setPrice(Integer price) {
 		this.price = price;
 	}
 
-	public Timestamp getFrom() {
+	public Date getFrom() {
 		return from;
 	}
-	public void setFrom(Timestamp from) {
+
+	public void setFrom(Date from) {
 		this.from = from;
 	}
 
-	public Timestamp getTo() {
+	public Date getTo() {
 		return to;
 	}
-	public void setTo(Timestamp to) {
+
+	public void setTo(Date to) {
 		this.to = to;
 	}
 
 	public Boolean getStatus() {
 		return status;
 	}
+
 	public void setStatus(Boolean status) {
 		this.status = status;
 	}
 
-
-	public CourtEntity getCourtByCourtid() {
-		return courtByCourtid;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		CourtPaymentEntity that = (CourtPaymentEntity) o;
+		return Objects.equals(courtid, that.courtid) &&
+				Objects.equals(price, that.price) &&
+				Objects.equals(from, that.from) &&
+				Objects.equals(to, that.to) &&
+				Objects.equals(status, that.status);
 	}
-	public void setCourtByCourtid(CourtEntity courtByCourtid) {
-		this.courtByCourtid = courtByCourtid;
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(courtid, price, from, to, status);
 	}
 }

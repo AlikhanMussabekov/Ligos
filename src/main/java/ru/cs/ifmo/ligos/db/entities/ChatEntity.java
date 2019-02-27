@@ -2,8 +2,8 @@ package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -12,23 +12,16 @@ public class ChatEntity implements Serializable {
 
 	@Id
 	@Column(name = "id", nullable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	/*@ManyToOne
-	@JoinColumn(name = "userid", referencedColumnName = "id")
-	private UserEntity userid;*/
-	@ManyToMany(mappedBy = "chats")
-	private Set<UserEntity> users;
-
-	@Column(name = "created")
+	@Column(name = "created", nullable = false)
 	private Date created;
 
-	@Column(name = "type")
+	@Column(name = "type", nullable = false)
 	private Boolean type;
 
-	@OneToMany(mappedBy = "chatid")
-	private Collection<MessageEntity> messagesById;
+	@ManyToMany(mappedBy = "chats")
+	private Set<UsersEntity> users;
 
 	public Integer getId() {
 		return id;
@@ -36,14 +29,6 @@ public class ChatEntity implements Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Set<UserEntity> getUsers() {
-		return users;
-	}
-
-	public void setUsers(Set<UserEntity> users) {
-		this.users = users;
 	}
 
 	public Date getCreated() {
@@ -62,11 +47,18 @@ public class ChatEntity implements Serializable {
 		this.type = type;
 	}
 
-	public Collection<MessageEntity> getMessagesById() {
-		return messagesById;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ChatEntity that = (ChatEntity) o;
+		return Objects.equals(id, that.id) &&
+				Objects.equals(created, that.created) &&
+				Objects.equals(type, that.type);
 	}
 
-	public void setMessagesById(Collection<MessageEntity> messagesById) {
-		this.messagesById = messagesById;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, created, type);
 	}
 }

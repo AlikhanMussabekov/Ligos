@@ -2,17 +2,19 @@ package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.util.Collection;
+import java.sql.Date;
+import java.util.Arrays;
+import java.util.Objects;
 
 @Entity
 @Table(name = "organization", schema = "public", catalog = "ligos")
 public class OrganizationEntity implements Serializable {
+
 	@Id
 	@Column(name = "id", nullable = false)
 	private Integer id;
 
-	@Column(name = "email", unique = true, nullable = false, length = 254)
+	@Column(name = "email", nullable = false, length = 254)
 	private String email;
 
 	@Column(name = "password", nullable = false, length = 255)
@@ -21,29 +23,29 @@ public class OrganizationEntity implements Serializable {
 	@Column(name = "name", nullable = true, length = 255)
 	private String name;
 
-	@Column(name = "photo", nullable = true, length = -1)
-	private String photo;
+	@Column(name = "photo", nullable = true)
+	private byte[] photo;
 
 	@Column(name = "type", nullable = true, length = 4)
 	private String type;
 
-	@Column(name = "iin",unique = true,nullable = true, length = 10)
+	@Column(name = "iin", nullable = true, length = 10)
 	private String iin;
 
-	@Column(name = "kpp",unique = true, nullable = true, length = 9)
+	@Column(name = "kpp", nullable = true, length = 9)
 	private String kpp;
 
-	@Column(name = "ogrn", unique = true,nullable = true, length = 13)
+	@Column(name = "ogrn", nullable = true, length = 13)
 	private String ogrn;
 
 	@Column(name = "ogrn_date", nullable = true)
-	private Timestamp ogrnDate;
+	private Date ogrnDate;
 
-	@Column(name = "ogrnip",unique = true, nullable = true, length = 15)
+	@Column(name = "ogrnip", nullable = true, length = 15)
 	private String ogrnip;
 
 	@Column(name = "ogrnip_date", nullable = true)
-	private Timestamp ogrnipDate;
+	private Date ogrnipDate;
 
 	@Column(name = "bik", nullable = true, length = 9)
 	private String bik;
@@ -57,22 +59,13 @@ public class OrganizationEntity implements Serializable {
 	@Column(name = "payment_bill", nullable = true, length = 20)
 	private String paymentBill;
 
-	@ManyToOne
-	@JoinColumn(name = "legal_address", referencedColumnName = "id", nullable = false)
-	private AddressEntity addressByLegalAddress;
+	@OneToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "legal_address", nullable = false)
+	private AddressEntity legalAddress;
 
-	@ManyToOne
-	@JoinColumn(name = "actual_address", referencedColumnName = "id", nullable = false)
-	private AddressEntity addressByActualAddress;
-
-	@OneToMany(mappedBy = "organizationByOrganizationid")
-	private Collection<CourtEntity> courtsById;
-
-	@OneToMany(mappedBy = "organizationByOrganizationid")
-	private Collection<SectionEntity> sectionsById;
-
-	@OneToMany(mappedBy = "organizationByOrganizationid")
-	private Collection<TrainerEntity> trainersById;
+	@OneToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "actual_address", nullable = false)
+	private AddressEntity actualAddress;
 
 	public Integer getId() {
 		return id;
@@ -106,11 +99,11 @@ public class OrganizationEntity implements Serializable {
 		this.name = name;
 	}
 
-	public String getPhoto() {
+	public byte[] getPhoto() {
 		return photo;
 	}
 
-	public void setPhoto(String photo) {
+	public void setPhoto(byte[] photo) {
 		this.photo = photo;
 	}
 
@@ -146,11 +139,11 @@ public class OrganizationEntity implements Serializable {
 		this.ogrn = ogrn;
 	}
 
-	public Timestamp getOgrnDate() {
+	public Date getOgrnDate() {
 		return ogrnDate;
 	}
 
-	public void setOgrnDate(Timestamp ogrnDate) {
+	public void setOgrnDate(Date ogrnDate) {
 		this.ogrnDate = ogrnDate;
 	}
 
@@ -162,11 +155,11 @@ public class OrganizationEntity implements Serializable {
 		this.ogrnip = ogrnip;
 	}
 
-	public Timestamp getOgrnipDate() {
+	public Date getOgrnipDate() {
 		return ogrnipDate;
 	}
 
-	public void setOgrnipDate(Timestamp ogrnipDate) {
+	public void setOgrnipDate(Date ogrnipDate) {
 		this.ogrnipDate = ogrnipDate;
 	}
 
@@ -202,43 +195,51 @@ public class OrganizationEntity implements Serializable {
 		this.paymentBill = paymentBill;
 	}
 
-	public Collection<CourtEntity> getCourtsById() {
-		return courtsById;
+	public AddressEntity getLegalAddress() {
+		return legalAddress;
 	}
 
-	public void setCourtsById(Collection<CourtEntity> courtsById) {
-		this.courtsById = courtsById;
+	public void setLegalAddress(AddressEntity legalAddress) {
+		this.legalAddress = legalAddress;
 	}
 
-	public AddressEntity getAddressByLegalAddress() {
-		return addressByLegalAddress;
+	public AddressEntity getActualAddress() {
+		return actualAddress;
 	}
 
-	public void setAddressByLegalAddress(AddressEntity addressByLegalAddress) {
-		this.addressByLegalAddress = addressByLegalAddress;
+	public void setActualAddress(AddressEntity actualAddress) {
+		this.actualAddress = actualAddress;
 	}
 
-	public AddressEntity getAddressByActualAddress() {
-		return addressByActualAddress;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		OrganizationEntity that = (OrganizationEntity) o;
+		return Objects.equals(id, that.id) &&
+				Objects.equals(email, that.email) &&
+				Objects.equals(password, that.password) &&
+				Objects.equals(name, that.name) &&
+				Arrays.equals(photo, that.photo) &&
+				Objects.equals(type, that.type) &&
+				Objects.equals(iin, that.iin) &&
+				Objects.equals(kpp, that.kpp) &&
+				Objects.equals(ogrn, that.ogrn) &&
+				Objects.equals(ogrnDate, that.ogrnDate) &&
+				Objects.equals(ogrnip, that.ogrnip) &&
+				Objects.equals(ogrnipDate, that.ogrnipDate) &&
+				Objects.equals(bik, that.bik) &&
+				Objects.equals(bankName, that.bankName) &&
+				Objects.equals(korrBill, that.korrBill) &&
+				Objects.equals(paymentBill, that.paymentBill) &&
+				Objects.equals(legalAddress, that.legalAddress) &&
+				Objects.equals(actualAddress, that.actualAddress);
 	}
 
-	public void setAddressByActualAddress(AddressEntity addressByActualAddress) {
-		this.addressByActualAddress = addressByActualAddress;
-	}
-
-	public Collection<SectionEntity> getSectionsById() {
-		return sectionsById;
-	}
-
-	public void setSectionsById(Collection<SectionEntity> sectionsById) {
-		this.sectionsById = sectionsById;
-	}
-
-	public Collection<TrainerEntity> getTrainersById() {
-		return trainersById;
-	}
-
-	public void setTrainersById(Collection<TrainerEntity> trainersById) {
-		this.trainersById = trainersById;
+	@Override
+	public int hashCode() {
+		int result = Objects.hash(id, email, password, name, type, iin, kpp, ogrn, ogrnDate, ogrnip, ogrnipDate, bik, bankName, korrBill, paymentBill, legalAddress, actualAddress);
+		result = 31 * result + Arrays.hashCode(photo);
+		return result;
 	}
 }

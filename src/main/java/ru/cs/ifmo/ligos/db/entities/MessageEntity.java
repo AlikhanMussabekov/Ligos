@@ -2,24 +2,30 @@ package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "message", schema = "public", catalog = "ligos")
 public class MessageEntity implements Serializable {
+
 	@Id
 	@Column(name = "id", nullable = false)
 	private Integer id;
 
-	@Column(name = "context", nullable = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "chatid", nullable = false)
+	private ChatEntity chatid;
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "senderid", nullable = false)
+	private UsersEntity senderid;
+
+	@Column(name = "context", nullable = false, length = -1)
 	private String context;
 
 	@Column(name = "time", nullable = false)
-	private Timestamp time;
-
-	@ManyToOne
-	@JoinColumn(name = "chatid", referencedColumnName = "id")
-	private ChatEntity chatid;
+	private Date time;
 
 	public Integer getId() {
 		return id;
@@ -27,6 +33,22 @@ public class MessageEntity implements Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public ChatEntity getChatid() {
+		return chatid;
+	}
+
+	public void setChatid(ChatEntity chatid) {
+		this.chatid = chatid;
+	}
+
+	public UsersEntity getSenderid() {
+		return senderid;
+	}
+
+	public void setSenderid(UsersEntity senderid) {
+		this.senderid = senderid;
 	}
 
 	public String getContext() {
@@ -37,19 +59,28 @@ public class MessageEntity implements Serializable {
 		this.context = context;
 	}
 
-	public Timestamp getTime() {
+	public Date getTime() {
 		return time;
 	}
 
-	public void setTime(Timestamp time) {
+	public void setTime(Date time) {
 		this.time = time;
 	}
 
-	public ChatEntity getChatByChatid() {
-		return chatid;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		MessageEntity that = (MessageEntity) o;
+		return Objects.equals(id, that.id) &&
+				Objects.equals(chatid, that.chatid) &&
+				Objects.equals(senderid, that.senderid) &&
+				Objects.equals(context, that.context) &&
+				Objects.equals(time, that.time);
 	}
 
-	public void setChatByChatid(ChatEntity chatid) {
-		this.chatid = chatid;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, chatid, senderid, context, time);
 	}
 }

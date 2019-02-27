@@ -2,20 +2,23 @@ package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "trainer_reviews", schema = "public", catalog = "ligos")
-public class TrainerReviewsEntity implements Serializable {
+public class TrainerReviewsEntity  implements Serializable {
+
 	@Id
-	@ManyToOne
-	@JoinColumn(name = "traineruserid", referencedColumnName = "userid")
-	private TrainerEntity trainerByTraineruserid;
+	private Integer id;
 
-	@ManyToOne
-	@JoinColumn(name = "userid", referencedColumnName = "id", nullable = false)
-	private UserEntity userByUserid;
+	@ManyToOne(fetch = FetchType.LAZY,optional = false)
+	@JoinColumn(name = "traineruserid", nullable = false)
+	private TrainerEntity traineruserid;
 
+	@ManyToOne(fetch = FetchType.LAZY,optional = false)
+	@JoinColumn(name = "userid", nullable = false)
+	private UsersEntity userid;
 
 	@Column(name = "review", nullable = false, length = -1)
 	private String review;
@@ -23,8 +26,24 @@ public class TrainerReviewsEntity implements Serializable {
 	@Column(name = "raiting", nullable = false)
 	private Short raiting;
 
-	@Column(name = "date", nullable = false)
-	private Timestamp date;
+	@Column(name = "DATE", nullable = false)
+	private Date date;
+
+	public TrainerEntity getTraineruserid() {
+		return traineruserid;
+	}
+
+	public void setTraineruserid(TrainerEntity traineruserid) {
+		this.traineruserid = traineruserid;
+	}
+
+	public UsersEntity getUserid() {
+		return userid;
+	}
+
+	public void setUserid(UsersEntity userid) {
+		this.userid = userid;
+	}
 
 	public String getReview() {
 		return review;
@@ -42,28 +61,28 @@ public class TrainerReviewsEntity implements Serializable {
 		this.raiting = raiting;
 	}
 
-	public Timestamp getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(Timestamp date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 
-
-	public TrainerEntity getTrainerByTraineruserid() {
-		return trainerByTraineruserid;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		TrainerReviewsEntity that = (TrainerReviewsEntity) o;
+		return Objects.equals(traineruserid, that.traineruserid) &&
+				Objects.equals(userid, that.userid) &&
+				Objects.equals(review, that.review) &&
+				Objects.equals(raiting, that.raiting) &&
+				Objects.equals(date, that.date);
 	}
 
-	public void setTrainerByTraineruserid(TrainerEntity trainerByTraineruserid) {
-		this.trainerByTraineruserid = trainerByTraineruserid;
-	}
-
-	public UserEntity getUserByUserid() {
-		return userByUserid;
-	}
-
-	public void setUserByUserid(UserEntity userByUserid) {
-		this.userByUserid = userByUserid;
+	@Override
+	public int hashCode() {
+		return Objects.hash(traineruserid, userid, review, raiting, date);
 	}
 }

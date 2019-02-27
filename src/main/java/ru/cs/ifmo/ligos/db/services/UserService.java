@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.cs.ifmo.ligos.db.entities.UserEntity;
+import ru.cs.ifmo.ligos.db.entities.UsersEntity;
 import ru.cs.ifmo.ligos.db.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -23,11 +23,11 @@ public class UserService implements UserDetailsService {
 		this.repository = repository;
 	}
 
-	public UserEntity getUserByEmail(String email){
+	public UsersEntity getUserByEmail(String email){
 		return repository.findByEmail(email);
 	}
 
-	public void save(UserEntity user){
+	public void save(UsersEntity user){
 		repository.save(user);
 	}
 
@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
 
-		UserEntity user = repository.findByEmail(s);
+		UsersEntity user = repository.findByEmail(s);
 
 		if(user == null){
 			throw new UsernameNotFoundException("User not found");

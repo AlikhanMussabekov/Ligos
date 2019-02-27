@@ -2,7 +2,7 @@ package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.Objects;
 
 @Entity
 @Table(name = "address", schema = "public", catalog = "ligos")
@@ -10,7 +10,6 @@ public class AddressEntity implements Serializable {
 
 	@Id
 	@Column(name = "id", nullable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
 	@Column(name = "country", nullable = false, length = 255)
@@ -27,22 +26,6 @@ public class AddressEntity implements Serializable {
 
 	@Column(name = "street", nullable = false, length = 255)
 	private String street;
-
-	@OneToMany(mappedBy = "addressByAddressid")
-	private Collection<CourtEntity> courtsById;
-
-	@OneToMany(mappedBy = "addressByLegalAddress")
-	private Collection<OrganizationEntity> organizationsById;
-
-	@OneToMany(mappedBy = "addressByActualAddress")
-	private Collection<OrganizationEntity> organizationsById_0;
-
-	@OneToMany(mappedBy = "addressByAddressid")
-	private Collection<SectionEntity> sectionsById;
-
-	@OneToMany(mappedBy = "addressByAddressid")
-	private Collection<TournamentEntity> tournamentsById;
-
 
 	public Integer getId() {
 		return id;
@@ -92,47 +75,21 @@ public class AddressEntity implements Serializable {
 		this.street = street;
 	}
 
-	public Collection<CourtEntity> getCourtsById() {
-		return courtsById;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		AddressEntity that = (AddressEntity) o;
+		return Objects.equals(id, that.id) &&
+				Objects.equals(country, that.country) &&
+				Objects.equals(state, that.state) &&
+				Objects.equals(zipCode, that.zipCode) &&
+				Objects.equals(city, that.city) &&
+				Objects.equals(street, that.street);
 	}
 
-	public void setCourtsById(Collection<CourtEntity> courtsById) {
-		this.courtsById = courtsById;
-	}
-
-
-	public Collection<OrganizationEntity> getOrganizationsById() {
-		return organizationsById;
-	}
-
-	public void setOrganizationsById(Collection<OrganizationEntity> organizationsById) {
-		this.organizationsById = organizationsById;
-	}
-
-
-	public Collection<OrganizationEntity> getOrganizationsById_0() {
-		return organizationsById_0;
-	}
-
-	public void setOrganizationsById_0(Collection<OrganizationEntity> organizationsById_0) {
-		this.organizationsById_0 = organizationsById_0;
-	}
-
-
-	public Collection<SectionEntity> getSectionsById() {
-		return sectionsById;
-	}
-
-	public void setSectionsById(Collection<SectionEntity> sectionsById) {
-		this.sectionsById = sectionsById;
-	}
-
-
-	public Collection<TournamentEntity> getTournamentsById() {
-		return tournamentsById;
-	}
-
-	public void setTournamentsById(Collection<TournamentEntity> tournamentsById) {
-		this.tournamentsById = tournamentsById;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, country, state, zipCode, city, street);
 	}
 }

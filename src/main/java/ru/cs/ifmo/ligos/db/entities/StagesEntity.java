@@ -2,20 +2,18 @@ package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.Objects;
 
 @Entity
 @Table(name = "stages", schema = "public", catalog = "ligos")
 public class StagesEntity implements Serializable {
+
 	@Id
 	@Column(name = "id", nullable = false)
 	private Integer id;
 
 	@Column(name = "name", nullable = false, length = 255)
 	private String name;
-
-	@OneToMany(mappedBy = "stagesByStageid")
-	private Collection<MatchesEntity> matchesById;
 
 	public Integer getId() {
 		return id;
@@ -33,12 +31,17 @@ public class StagesEntity implements Serializable {
 		this.name = name;
 	}
 
-
-	public Collection<MatchesEntity> getMatchesById() {
-		return matchesById;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		StagesEntity that = (StagesEntity) o;
+		return Objects.equals(id, that.id) &&
+				Objects.equals(name, that.name);
 	}
 
-	public void setMatchesById(Collection<MatchesEntity> matchesById) {
-		this.matchesById = matchesById;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, name);
 	}
 }

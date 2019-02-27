@@ -2,33 +2,46 @@ package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "trainer", schema = "public", catalog = "ligos")
 public class TrainerEntity implements Serializable {
-	@Id
-	@OneToOne
-	@JoinColumn(name = "userid", referencedColumnName = "id")
-	private UserEntity userByUserid;
 
-	@ManyToOne
-	@JoinColumn(name = "organizationid", referencedColumnName = "id", nullable = false)
-	private OrganizationEntity organizationByOrganizationid;
+	@Id
+	private Integer id;
+
+	@MapsId
+	@OneToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "userid", nullable = false)
+	private UsersEntity userid;
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "organizationid", nullable = false)
+	private OrganizationEntity organizationid;
 
 	@Column(name = "raiting", nullable = false)
 	private Short raiting;
 
-	@OneToMany(mappedBy = "trainerByTrainerid")
-	private Collection<SectionDetailsEntity> sectionDetailsByUserid;
+	@OneToMany(fetch = FetchType.LAZY ,mappedBy = "trainerid")
+	private Set<TeamEntity> teams;
 
-	@OneToMany(mappedBy = "trainerByTrainerid")
-	private Collection<TeamEntity> teamsByUserid;
+	public UsersEntity getUserid() {
+		return userid;
+	}
 
-	//todo
-	@OneToMany(mappedBy = "trainerByTraineruserid")
-	private Set<TrainerReviewsEntity> trainerReviews;
+	public void setUserid(UsersEntity userid) {
+		this.userid = userid;
+	}
+
+	public OrganizationEntity getOrganizationid() {
+		return organizationid;
+	}
+
+	public void setOrganizationid(OrganizationEntity organizationid) {
+		this.organizationid = organizationid;
+	}
 
 	public Short getRaiting() {
 		return raiting;
@@ -38,44 +51,18 @@ public class TrainerEntity implements Serializable {
 		this.raiting = raiting;
 	}
 
-
-	public Collection<SectionDetailsEntity> getSectionDetailsByUserid() {
-		return sectionDetailsByUserid;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		TrainerEntity that = (TrainerEntity) o;
+		return Objects.equals(userid, that.userid) &&
+				Objects.equals(organizationid, that.organizationid) &&
+				Objects.equals(raiting, that.raiting);
 	}
 
-	public void setSectionDetailsByUserid(Collection<SectionDetailsEntity> sectionDetailsByUserid) {
-		this.sectionDetailsByUserid = sectionDetailsByUserid;
-	}
-
-	public Collection<TeamEntity> getTeamsByUserid() {
-		return teamsByUserid;
-	}
-
-	public void setTeamsByUserid(Collection<TeamEntity> teamsByUserid) {
-		this.teamsByUserid = teamsByUserid;
-	}
-
-	public UserEntity getUserByUserid() {
-		return userByUserid;
-	}
-
-	public void setUserByUserid(UserEntity userByUserid) {
-		this.userByUserid = userByUserid;
-	}
-
-	public OrganizationEntity getOrganizationByOrganizationid() {
-		return organizationByOrganizationid;
-	}
-
-	public void setOrganizationByOrganizationid(OrganizationEntity organizationByOrganizationid) {
-		this.organizationByOrganizationid = organizationByOrganizationid;
-	}
-
-	public Set<TrainerReviewsEntity> getTrainerReviews() {
-		return trainerReviews;
-	}
-
-	public void setTrainerReviews(Set<TrainerReviewsEntity> trainerReviews) {
-		this.trainerReviews = trainerReviews;
+	@Override
+	public int hashCode() {
+		return Objects.hash(userid, organizationid, raiting);
 	}
 }

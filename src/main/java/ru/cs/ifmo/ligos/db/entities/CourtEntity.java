@@ -2,15 +2,20 @@ package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.Objects;
 
 @Entity
 @Table(name = "court", schema = "public", catalog = "ligos")
 public class CourtEntity implements Serializable {
+
 	@Id
 	@Column(name = "id", nullable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "organizationid", nullable = false)
+	private OrganizationEntity organizationid;
 
 	@Column(name = "name", nullable = false, length = 255)
 	private String name;
@@ -18,40 +23,35 @@ public class CourtEntity implements Serializable {
 	@Column(name = "description", nullable = false, length = -1)
 	private String description;
 
-	@Column(name = "photos", nullable = false, length = -1)
-	//Nope
-	private String photos;
+	@Column(name = "photos", nullable = false)
+	private byte[] photos;
+
+	@Column(name = "addressid", nullable = false)
+	private Integer addressid;
 
 	@Column(name = "raiting", nullable = false)
 	private Short raiting;
 
-	@ManyToOne
-	@JoinColumn(name = "organizationid", referencedColumnName = "id", nullable = false)
-	private OrganizationEntity organizationByOrganizationid;
-
-	@ManyToOne
-	@JoinColumn(name = "addressid", referencedColumnName = "id", nullable = false)
-	private AddressEntity addressByAddressid;
-
-	@OneToOne(mappedBy = "courtByCourtid")
-	private CourtPaymentEntity courtPaymentById;
-
-	@OneToOne(mappedBy = "courtByCourtid")
-	private CourtReviewsEntity courtReviewsById;
-
-	@OneToMany(mappedBy = "courtByCourtid")
-	private Collection<MatchesEntity> matchesById;
-
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public OrganizationEntity getOrganizationid() {
+		return organizationid;
+	}
+
+	public void setOrganizationid(OrganizationEntity organizationid) {
+		this.organizationid = organizationid;
 	}
 
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -59,56 +59,53 @@ public class CourtEntity implements Serializable {
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	public String getPhotos() {
+	public byte[] getPhotos() {
 		return photos;
 	}
-	public void setPhotos(String photos) {
+
+	public void setPhotos(byte[] photos) {
 		this.photos = photos;
+	}
+
+	public Integer getAddressid() {
+		return addressid;
+	}
+
+	public void setAddressid(Integer addressid) {
+		this.addressid = addressid;
 	}
 
 	public Short getRaiting() {
 		return raiting;
 	}
+
 	public void setRaiting(Short raiting) {
 		this.raiting = raiting;
 	}
 
-	public OrganizationEntity getOrganizationByOrganizationid() {
-		return organizationByOrganizationid;
-	}
-	public void setOrganizationByOrganizationid(OrganizationEntity organizationByOrganizationid) {
-		this.organizationByOrganizationid = organizationByOrganizationid;
-	}
-
-	public AddressEntity getAddressByAddressid() {
-		return addressByAddressid;
-	}
-	public void setAddressByAddressid(AddressEntity addressByAddressid) {
-		this.addressByAddressid = addressByAddressid;
-	}
-
-	public CourtPaymentEntity getCourtPaymentById() {
-		return courtPaymentById;
-	}
-	public void setCourtPaymentById(CourtPaymentEntity courtPaymentById) {
-		this.courtPaymentById = courtPaymentById;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		CourtEntity that = (CourtEntity) o;
+		return Objects.equals(id, that.id) &&
+				Objects.equals(organizationid, that.organizationid) &&
+				Objects.equals(name, that.name) &&
+				Objects.equals(description, that.description) &&
+				Arrays.equals(photos, that.photos) &&
+				Objects.equals(addressid, that.addressid) &&
+				Objects.equals(raiting, that.raiting);
 	}
 
-	public CourtReviewsEntity getCourtReviewsById() {
-		return courtReviewsById;
-	}
-	public void setCourtReviewsById(CourtReviewsEntity courtReviewsById) {
-		this.courtReviewsById = courtReviewsById;
-	}
-
-	public Collection<MatchesEntity> getMatchesById() {
-		return matchesById;
-	}
-	public void setMatchesById(Collection<MatchesEntity> matchesById) {
-		this.matchesById = matchesById;
+	@Override
+	public int hashCode() {
+		int result = Objects.hash(id, organizationid, name, description, addressid, raiting);
+		result = 31 * result + Arrays.hashCode(photos);
+		return result;
 	}
 }

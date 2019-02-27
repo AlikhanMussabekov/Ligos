@@ -2,7 +2,7 @@ package ru.cs.ifmo.ligos.db.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.Objects;
 
 @Entity
 @Table(name = "age_category", schema = "public", catalog = "ligos")
@@ -10,7 +10,6 @@ public class AgeCategoryEntity implements Serializable {
 
 	@Id
 	@Column(name = "id", nullable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
 	@Column(name = "FROM", nullable = false)
@@ -19,16 +18,10 @@ public class AgeCategoryEntity implements Serializable {
 	@Column(name = "TO", nullable = false)
 	private Integer to;
 
-	@OneToMany(mappedBy = "ageCategoryByAgeCategoryid")
-	private Collection<SectionDetailsEntity> sectionDetailsById;
-
-	@OneToMany(mappedBy = "ageCategoryByAgeCategoryid")
-	private Collection<TournamentDetailsEntity> tournamentDetailsById;
-
-
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -36,6 +29,7 @@ public class AgeCategoryEntity implements Serializable {
 	public Integer getFrom() {
 		return from;
 	}
+
 	public void setFrom(Integer from) {
 		this.from = from;
 	}
@@ -43,22 +37,23 @@ public class AgeCategoryEntity implements Serializable {
 	public Integer getTo() {
 		return to;
 	}
+
 	public void setTo(Integer to) {
 		this.to = to;
 	}
 
-	public Collection<SectionDetailsEntity> getSectionDetailsById() {
-		return sectionDetailsById;
-	}
-	public void setSectionDetailsById(Collection<SectionDetailsEntity> sectionDetailsById) {
-		this.sectionDetailsById = sectionDetailsById;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		AgeCategoryEntity that = (AgeCategoryEntity) o;
+		return Objects.equals(id, that.id) &&
+				Objects.equals(from, that.from) &&
+				Objects.equals(to, that.to);
 	}
 
-
-	public Collection<TournamentDetailsEntity> getTournamentDetailsById() {
-		return tournamentDetailsById;
-	}
-	public void setTournamentDetailsById(Collection<TournamentDetailsEntity> tournamentDetailsById) {
-		this.tournamentDetailsById = tournamentDetailsById;
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, from, to);
 	}
 }
