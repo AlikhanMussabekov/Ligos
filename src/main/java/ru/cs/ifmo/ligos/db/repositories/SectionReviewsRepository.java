@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface SectionReviewsRepository extends JpaRepository<SectionReviewsEntity, Long> {
 
+	List<SectionReviewsEntity> findAllBySectionid(SectionEntity sectionEntity);
+
 }

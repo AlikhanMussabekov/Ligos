@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface SectionUsersRepository extends JpaRepository<SectionUsersEntity, Long> {
 
-	@Query(nativeQuery = true, value = "SELECT userid from section_users where section_detailsid=?1")
+	@Query("SELECT sue.userid from SectionUsersEntity sue where section_detailsid=?1")
 	public List<UsersEntity> selectAllUsersInSection(SectionUsersEntity sectionUsersEntity);
 }

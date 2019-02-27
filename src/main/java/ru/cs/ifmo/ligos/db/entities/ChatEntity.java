@@ -1,5 +1,9 @@
 package ru.cs.ifmo.ligos.db.entities;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -7,10 +11,15 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@EqualsAndHashCode
 @Table(name = "chat", schema = "public", catalog = "ligos")
 public class ChatEntity implements Serializable {
 
 	@Id
+	@SequenceGenerator(name = "chat_id_seq", sequenceName = "chat_id_seq",allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chat_id_seq")
 	@Column(name = "id", nullable = false)
 	private Integer id;
 
@@ -23,42 +32,4 @@ public class ChatEntity implements Serializable {
 	@ManyToMany(mappedBy = "chats")
 	private Set<UsersEntity> users;
 
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public Date getCreated() {
-		return created;
-	}
-
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-
-	public Boolean getType() {
-		return type;
-	}
-
-	public void setType(Boolean type) {
-		this.type = type;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		ChatEntity that = (ChatEntity) o;
-		return Objects.equals(id, that.id) &&
-				Objects.equals(created, that.created) &&
-				Objects.equals(type, that.type);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, created, type);
-	}
 }
