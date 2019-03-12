@@ -22,8 +22,8 @@ import java.util.Set;
 public class UsersEntity implements Serializable {
 
 	@Id
-	@SequenceGenerator(name = "user_id_seq", sequenceName = "user_id_seq",allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
+	@SequenceGenerator(name = "user_id_seq", sequenceName = "users_id_seq",allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
 	@Column(name = "id", nullable = false)
 	private Integer id;
 
@@ -56,7 +56,6 @@ public class UsersEntity implements Serializable {
 	@Column(name = "birthday", nullable = true)
 	private Date birthday;
 
-	@Lob
 	@Column(name = "photo", nullable = true)
 	private byte[] photo;
 

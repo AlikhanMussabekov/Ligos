@@ -20,11 +20,11 @@ public class TrainerEntity implements Serializable {
 	private Integer id;
 
 	@MapsId
-	@OneToOne(fetch = FetchType.EAGER, optional = false)
+	@OneToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "userid", nullable = false)
 	private UsersEntity userid;
 
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "organizationid", nullable = false)
 	private OrganizationEntity organizationid;
 

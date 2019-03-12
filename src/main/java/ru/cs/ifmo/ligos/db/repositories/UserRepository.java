@@ -9,9 +9,11 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<UsersEntity, Long> {
 
+	boolean existsByEmail(String email);
+
 	UsersEntity findByEmail(String email);
 
-	void removeByEmail(String email);
+	void deleteByEmail(String email);
 
 	/*@Query("select name from TEAM where ")
 	public List<UserEntity> findUserTeams(@Param("userId") Long id);*/
