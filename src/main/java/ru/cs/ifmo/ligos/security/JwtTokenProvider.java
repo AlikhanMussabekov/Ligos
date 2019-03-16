@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,27 +24,22 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
-import ru.cs.ifmo.ligos.db.services.UserService;
 import ru.cs.ifmo.ligos.exception.CustomException;
 import ru.cs.ifmo.ligos.db.entities.Role;
 
 @Component
 public class JwtTokenProvider {
 
-	/**
-	 * THIS IS NOT A SECURE PRACTICE! For simplicity, we are storing a static key here. Ideally, in a
-	 * microservices environment, this key would be kept on a config-server.
-	 */
 	@Value("${security.jwt.token.secret-key:secret-key}")
 	private String secretKey;
 
 	@Value("${security.jwt.token.expire-length:3600000}")
-	private long validityInMilliseconds = 3600000; // 1h
+	private long validityInMilliseconds = 3600000;
 
 	private final MyUserDetails myUserDetails;
 
 	@Autowired
-	public JwtTokenProvider(MyUserDetails myUserDetails) {
+	public JwtTokenProvider(@Qualifier("userDetails") MyUserDetails myUserDetails) {
 		this.myUserDetails = myUserDetails;
 	}
 
@@ -52,24 +48,25 @@ public class JwtTokenProvider {
 		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
 	}
 
-	public String createToken(String username, List<Role> roles) {
+	public String createToken(String email, List<Role> roles) {
 
-		Claims claims = Jwts.claims().setSubject(username);
+		Claims claims = Jwts.claims().setSubject(email);
 		claims.put("auth", roles.stream().map(s -> new SimpleGrantedAuthority(s.getAuthority())).filter(Objects::nonNull).collect(Collectors.toList()));
 
 		Date now = new Date();
 		Date validity = new Date(now.getTime() + validityInMilliseconds);
 
-		return Jwts.builder()//
-				.setClaims(claims)//
-				.setIssuedAt(now)//
-				.setExpiration(validity)//
-				.signWith(SignatureAlgorithm.HS256, secretKey)//
+		return Jwts.builder()
+				.setClaims(claims)
+				.setIssuedAt(now)
+				.setExpiration(validity)
+				.signWith(SignatureAlgorithm.HS256, secretKey)
 				.compact();
 	}
 
 	public Authentication getAuthentication(String token) {
 		UserDetails userDetails = myUserDetails.loadUserByUsername(getEmail(token));
+
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 

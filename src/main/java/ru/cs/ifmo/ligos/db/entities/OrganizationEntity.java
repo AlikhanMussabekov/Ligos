@@ -69,10 +69,10 @@ public class OrganizationEntity implements Serializable {
 	private String paymentBill;
 
 	@OneToOne(fetch = FetchType.EAGER, optional = false)
-	@JoinColumn(name = "legal_address", nullable = false)
+	@JoinColumn(name = "legal_address", nullable = true)
 	private AddressEntity legalAddress;
 
 	@OneToOne(fetch = FetchType.EAGER, optional = false)
-	@JoinColumn(name = "actual_address", nullable = false)
+	@JoinColumn(name = "actual_address", nullable = true)
 	private AddressEntity actualAddress;
 }

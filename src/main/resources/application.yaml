@@ -12,14 +12,10 @@ spring:
       hibernate:
         temp:
           use_jdbc_metadata_defaults: false
+    hibernate:
+      ddl-auto: update
   jooq:
     sql-dialect: org.hibernate.dialect.PostgreSQL9Dialect
-
-logging:
-  file: logs/dev.log
-  level:
-    org.springframework.web: debug
-    ru.cs.ifmo.ligos: debug
 
 security:
   jwt:
@@ -33,3 +29,9 @@ UserController:
   delete: Deletes specific user by username
   search: Returns specific user by username
   me: Returns current user's data
+logging:
+  file: logs/dev.log
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    ru.cs.ifmo.ligos: DEBUG

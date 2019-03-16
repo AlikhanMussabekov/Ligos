@@ -5,4 +5,10 @@ import ru.cs.ifmo.ligos.db.entities.OrganizationEntity;
 
 public interface OrganizationRepository extends JpaRepository<OrganizationEntity, Long> {
 
+	boolean existsByEmail(String email);
+
+	OrganizationEntity findByEmail(String email);
+
+	void deleteByEmail(String email);
+
 }
