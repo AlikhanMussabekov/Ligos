@@ -5,13 +5,14 @@ import org.springframework.stereotype.Repository;
 import ru.cs.ifmo.ligos.db.entities.UsersEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<UsersEntity, Long> {
 
 	boolean existsByEmail(String email);
 
-	UsersEntity findByEmail(String email);
+	Optional<UsersEntity> findByEmail(String email);
 
 	void deleteByEmail(String email);
 

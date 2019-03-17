@@ -59,8 +59,9 @@ public class UsersEntity implements Serializable {
 	@Column(name = "raiting", nullable = true)
 	private Short raiting;
 
-	@Column(name = "auth_type", nullable = false, length = 6)
-	private String authType;
+	@Column(name = "auth_type", nullable = false, length = 30)
+	@Enumerated(EnumType.STRING)
+	private AuthType authType;
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "chat_users",

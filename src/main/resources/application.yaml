@@ -17,27 +17,30 @@ spring:
   jooq:
     sql-dialect: org.hibernate.dialect.PostgreSQL9Dialect
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 1055385793279-ofrltj5arpqs57sjuuac8vaurneaas0p.apps.googleusercontent.com
+            clientSecret: ${googleClientSecret}
+            redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
+            userAuthorizationUri: https://accounts.google.com/o/oauth2/v2/auth
+            access-token-uri: https://www.googleapis.com/oauth2/v4/token
+            scope: openid profile email
+        provider:
+          google:
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            preferTokenInfo: true
+
+
+
 security:
   jwt:
     token:
       secret-key: ${tokenSecretKey}
       expire-length: 36000
 
-  oauth2:
-    client:
-      google:
-        id: 1055385793279-ofrltj5arpqs57sjuuac8vaurneaas0p.apps.googleusercontent.com
-        client-secret: ${googleClientSecret}
-        access-token-uri: https://www.googleapis.com/oauth2/v3/token
-        user-authorization-uri: https://accounts.google.com/o/oauth2/auth
-        token-name: oauth_token
-        authentication-scheme: query
-        client-authentication-scheme: form
-        scope: profile email
-
-      resource:
-        user-info-uri: https://www.googleapis.com/userinfo/v2/me
-        prefer-token-info: false
 
 
 UserController:

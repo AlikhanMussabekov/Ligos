@@ -13,18 +13,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.cs.ifmo.ligos.db.entities.OrganizationEntity;
-import ru.cs.ifmo.ligos.db.entities.Role;
-import ru.cs.ifmo.ligos.db.entities.RoleName;
-import ru.cs.ifmo.ligos.db.entities.UsersEntity;
 import ru.cs.ifmo.ligos.db.repositories.OrganizationRepository;
 import ru.cs.ifmo.ligos.db.repositories.RoleRepository;
 import ru.cs.ifmo.ligos.dto.ApiResponse;
-import ru.cs.ifmo.ligos.exception.CustomException;
-import ru.cs.ifmo.ligos.security.JwtAuthenticationResponse;
-import ru.cs.ifmo.ligos.security.JwtTokenProvider;
+import ru.cs.ifmo.ligos.security.jwt.JwtAuthenticationResponse;
+import ru.cs.ifmo.ligos.security.jwt.JwtTokenProvider;
 
 import java.net.URI;
-import java.util.Collections;
 
 @Service
 @SuppressWarnings({"Duplicates", "unchecked"})

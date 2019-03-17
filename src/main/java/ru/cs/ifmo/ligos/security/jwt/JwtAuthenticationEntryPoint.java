@@ -1,4 +1,4 @@
-package ru.cs.ifmo.ligos.security;
+package ru.cs.ifmo.ligos.security.jwt;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

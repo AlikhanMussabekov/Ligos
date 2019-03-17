@@ -16,6 +16,7 @@ import ru.cs.ifmo.ligos.db.repositories.UserRepository;
 
 import javax.transaction.Transactional;
 import java.util.Collections;
+import java.util.Optional;
 
 @Service("userDetails")
 @Qualifier("userDetails")
@@ -34,13 +35,13 @@ public class MyUserDetails implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-		final UsersEntity user = userRepository.findByEmail(email);
+		final Optional<UsersEntity> user = userRepository.findByEmail(email);
 		final OrganizationEntity organization = organizationRepository.findByEmail(email);
 
-		if (user != null){
+		if (user.isPresent()){
 			return User
 					.withUsername(email)
-					.password(user.getPassword())
+					.password(user.get().getPassword())
 					.authorities(Collections.singletonList(RoleName.ROLE_USER))
 					.accountExpired(false)
 					.accountLocked(false)
