@@ -6,6 +6,9 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -35,25 +38,26 @@ public class OrganizationAuthorizationController {
 		return "OK";
 	}
 
-	@PostMapping("/signin")
+	@PostMapping(value = "/signin", produces = "application/json")
 	@ApiOperation(value = "${OrganizationAuthorizationController.signin}")
 	@ApiResponses(value = {
 			@ApiResponse(code = 400, message = "Something went wrong"),
-			@ApiResponse(code = 422, message = "Invalid username/password supplied")})
-	public String login(
+			@ApiResponse(code = 422, message = "Invalid email/password supplied")})
+	public ResponseEntity<?> login(
 						@ApiParam("Email") @RequestParam String email,
 						@ApiParam("Password") @RequestParam String password) {
 		return organizationService.signin(email, password);
 	}
 
-	@PostMapping("/signup")
+	@PostMapping(value = "/signup", produces = "application/json")
+	@Procedure("application/json")
 	@ApiOperation(value = "${OrganizationAuthorizationController.signup}")
 	@ApiResponses(value = {
 			@ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
-			@ApiResponse(code = 422, message = "Username is already in use"),
+			@ApiResponse(code = 422, message = "Email is already in use"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token")})
-	public String signup(@ApiParam("Signup User") @RequestBody OrganizationDataDTO user) {
+	public ResponseEntity<?> signup(@ApiParam("Signup organization") @RequestBody OrganizationDataDTO user) {
 		return organizationService.signup(modelMapper.map(user, OrganizationEntity.class));
 	}
 

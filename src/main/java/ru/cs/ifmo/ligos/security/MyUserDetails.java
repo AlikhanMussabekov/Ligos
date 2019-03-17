@@ -9,11 +9,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import ru.cs.ifmo.ligos.db.entities.OrganizationEntity;
-import ru.cs.ifmo.ligos.db.entities.Role;
+import ru.cs.ifmo.ligos.db.entities.RoleName;
 import ru.cs.ifmo.ligos.db.entities.UsersEntity;
 import ru.cs.ifmo.ligos.db.repositories.OrganizationRepository;
 import ru.cs.ifmo.ligos.db.repositories.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 
 @Service("userDetails")
@@ -40,7 +41,7 @@ public class MyUserDetails implements UserDetailsService {
 			return User
 					.withUsername(email)
 					.password(user.getPassword())
-					.authorities(Collections.singletonList(Role.ROLE_CLIENT))
+					.authorities(Collections.singletonList(RoleName.ROLE_USER))
 					.accountExpired(false)
 					.accountLocked(false)
 					.credentialsExpired(false)
@@ -50,7 +51,7 @@ public class MyUserDetails implements UserDetailsService {
 			return User
 					.withUsername(email)
 					.password(organization.getPassword())
-					.authorities(Collections.singletonList(Role.ROLE_ORGANIZATION))
+					.authorities(Collections.singletonList(RoleName.ROLE_ORGANIZATION))
 					.accountExpired(false)
 					.accountLocked(false)
 					.credentialsExpired(false)

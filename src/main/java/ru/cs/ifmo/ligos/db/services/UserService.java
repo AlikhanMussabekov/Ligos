@@ -5,29 +5,29 @@ import org.apache.logging.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.cs.ifmo.ligos.db.entities.Role;
+import ru.cs.ifmo.ligos.db.entities.RoleName;
 import ru.cs.ifmo.ligos.db.entities.UsersEntity;
+import ru.cs.ifmo.ligos.db.repositories.RoleRepository;
 import ru.cs.ifmo.ligos.db.repositories.UserRepository;
-import org.springframework.security.core.userdetails.UserDetails;
+import ru.cs.ifmo.ligos.dto.ApiResponse;
 import ru.cs.ifmo.ligos.exception.CustomException;
+import ru.cs.ifmo.ligos.security.JwtAuthenticationResponse;
 import ru.cs.ifmo.ligos.security.JwtTokenProvider;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
+import java.net.URI;
 import java.util.Collections;
-import java.util.List;
-
-import static ru.cs.ifmo.ligos.db.entities.Role.ROLE_CLIENT;
 
 @Service
+@SuppressWarnings({"Duplicates", "unchecked"})
 public class UserService {
 
 	private final Logger logger = LogManager.getLogger(UserService.class);
@@ -36,14 +36,17 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final AuthenticationManager authenticationManager;
+	private final RoleRepository roleRepository;
 
 	@Autowired
 	public UserService(UserRepository repository, PasswordEncoder passwordEncoder,
-					   JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
+					   JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager,
+					   RoleRepository roleRepository) {
 		this.repository = repository;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtTokenProvider = jwtTokenProvider;
 		this.authenticationManager = authenticationManager;
+		this.roleRepository = roleRepository;
 	}
 
 	public UsersEntity getUserByEmail(String email){
@@ -54,44 +57,39 @@ public class UserService {
 		repository.save(user);
 	}
 
-	public String signin(String email, String password) {
-		try {
+	public ResponseEntity<?> signin(String email, String password) {
 
-			UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
-			authenticationManager.authenticate(token);
-			logger.debug( "[SIGNIN - CLIENT] " + email + " SUCCESS");
-			return jwtTokenProvider.createToken(email, Collections.singletonList(ROLE_CLIENT));
-		} catch (AuthenticationException e) {
-			logger.debug( "[SIGNIN - CLIENT] " + email + " FAILURE");
-			throw new CustomException("Invalid email/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(email, password));
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+
+		String jwt = jwtTokenProvider.generateToken(authentication);
+		return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+	}
+
+	public ResponseEntity<?> signup(UsersEntity user) {
+		if(repository.existsByEmail(user.getEmail())) {
+			return new ResponseEntity(new ApiResponse(false, "Email is already taken!"),
+					HttpStatus.BAD_REQUEST);
 		}
 
-	}
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+/*
 
-	public String signup(UsersEntity user) {
-		if (!repository.existsByEmail(user.getEmail())) {
-			user.setPassword(passwordEncoder.encode(user.getPassword()));
+		Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
+				.orElseThrow(() -> new CustomException("User Role not set.", HttpStatus.BAD_REQUEST));
 
-			logger.debug( "[SIGNUP - CLIENT] " + user.getEmail() + " SUCCESS");
+		//user.setRoles(Collections.singleton(userRole));
+*/
 
-			repository.save(user);
-			return jwtTokenProvider.createToken(user.getEmail(), Collections.singletonList(ROLE_CLIENT));
-		} else {
-			logger.debug( "[SIGNUP - CLIENT] " + user.getEmail() + " FAILURE");
-			throw new CustomException("Email is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
-		}
-	}
+		UsersEntity result = repository.save(user);
 
-	public void delete(String email){
-		repository.deleteByEmail(email);
-	}
+		URI location = ServletUriComponentsBuilder
+				.fromCurrentContextPath().path("/api/users/{username}")
+				.buildAndExpand(result.getEmail()).toUri();
 
-	public UsersEntity whoami(HttpServletRequest req) {
-		return repository.findByEmail(jwtTokenProvider.getEmail(jwtTokenProvider.resolveToken(req)));
-	}
+		return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
 
-	public String refresh(String email) {
-		return jwtTokenProvider.createToken(email, Collections.singletonList(ROLE_CLIENT));
 	}
 
 }

@@ -20,15 +20,40 @@ spring:
 security:
   jwt:
     token:
-      secret-key: secret-key
+      secret-key: ${tokenSecretKey}
       expire-length: 36000
+
+  oauth2:
+    client:
+      google:
+        id: 1055385793279-ofrltj5arpqs57sjuuac8vaurneaas0p.apps.googleusercontent.com
+        client-secret: ${googleClientSecret}
+        access-token-uri: https://www.googleapis.com/oauth2/v3/token
+        user-authorization-uri: https://accounts.google.com/o/oauth2/auth
+        token-name: oauth_token
+        authentication-scheme: query
+        client-authentication-scheme: form
+        scope: profile email
+
+      resource:
+        user-info-uri: https://www.googleapis.com/userinfo/v2/me
+        prefer-token-info: false
+
 
 UserController:
   signin: Authenticates user and returns its JWT token.
   signup: Creates user and returns its JWT token
-  delete: Deletes specific user by username
-  search: Returns specific user by username
+  delete: Deletes specific user by email
+  search: Returns specific user by email
   me: Returns current user's data
+
+OrganizationAuthorizationController:
+  signin: Authenticates organization and returns its JWT token.
+  signup: Creates organization and returns its JWT token
+  delete: Deletes specific organization by email
+  search: Returns specific organization by email
+  me: Returns current organization's data
+
 logging:
   file: logs/dev.log
   level:

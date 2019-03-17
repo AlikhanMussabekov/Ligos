@@ -1,55 +1,49 @@
 package ru.cs.ifmo.ligos.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import ru.cs.ifmo.ligos.security.JwtTokenFilterConfigurer;
-import ru.cs.ifmo.ligos.security.JwtTokenProvider;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.cs.ifmo.ligos.security.JwtAuthenticationEntryPoint;
+import ru.cs.ifmo.ligos.security.JwtAuthenticationFilter;
 import ru.cs.ifmo.ligos.security.MyUserDetails;
 
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(
+		prePostEnabled = true,
+		securedEnabled = true,
+		jsr250Enabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Value("${security.jwt.token.secret-key:secret-key}")
-	private String secretKey;
-
-	private final JwtTokenProvider jwtTokenProvider;
+	@Autowired
+	MyUserDetails myUserDetails;
 
 	@Autowired
-	public WebSecurityConfig(JwtTokenProvider jwtTokenProvider) {
-		this.jwtTokenProvider = jwtTokenProvider;
+	private JwtAuthenticationEntryPoint unauthorizedHandler;
+
+	@Bean
+	public JwtAuthenticationFilter jwtAuthenticationFilter() {
+		return new JwtAuthenticationFilter();
 	}
 
 	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-
-		http.csrf().disable();
-
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-		http.authorizeRequests()
-				.antMatchers("/users/*").permitAll()
-				.antMatchers("/organizations/*").permitAll()
-				.anyRequest().authenticated();
-
-		http.exceptionHandling().accessDeniedPage("/login");
-
-		http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
+	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+		authenticationManagerBuilder
+				.userDetailsService(myUserDetails)
+				.passwordEncoder(passwordEncoder());
 	}
 
-
-	@Bean
+	@Bean(BeanIds.AUTHENTICATION_MANAGER)
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
@@ -57,6 +51,42 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder(12);
+		return new BCryptPasswordEncoder();
+	}
+
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http
+				.cors()
+				.and()
+				.csrf()
+				.disable()
+				.exceptionHandling()
+				.authenticationEntryPoint(unauthorizedHandler)
+				.and()
+				.sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+				.and()
+				.authorizeRequests()
+				.antMatchers("/",
+						"/favicon.ico",
+						"/**/*.png",
+						"/**/*.gif",
+						"/**/*.svg",
+						"/**/*.jpg",
+						"/**/*.html",
+						"/**/*.css",
+						"/**/*.js")
+				.permitAll()
+				.antMatchers("/users/*").permitAll()
+				.antMatchers("/organizations/*").permitAll()
+				.antMatchers(HttpMethod.GET, "/organizations", "/users")
+				.permitAll()
+				.anyRequest()
+				.authenticated();
+
+		// Add our custom JWT security filter
+		http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
 	}
 }

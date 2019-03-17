@@ -1,18 +1,21 @@
 package ru.cs.ifmo.ligos.db.entities;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 @Table(name = "organization", schema = "public", catalog = "ligos")
 public class OrganizationEntity implements Serializable {
@@ -75,4 +78,5 @@ public class OrganizationEntity implements Serializable {
 	@OneToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "actual_address", nullable = true)
 	private AddressEntity actualAddress;
+
 }

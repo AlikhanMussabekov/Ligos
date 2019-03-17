@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.cs.ifmo.ligos.db.entities.Role;
+import ru.cs.ifmo.ligos.db.entities.RoleName;
 
 import java.util.List;
 
@@ -28,6 +29,6 @@ public class UserDataDTO {
 	private String authType;
 
 	@ApiModelProperty(position = 4)
-	List<Role> roles;
+	List<RoleName> roles;
 
 }

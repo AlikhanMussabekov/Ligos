@@ -1,93 +1,64 @@
 package ru.cs.ifmo.ligos.security;
 
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import io.jsonwebtoken.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-
-import ru.cs.ifmo.ligos.exception.CustomException;
-import ru.cs.ifmo.ligos.db.entities.Role;
+import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
 
-	@Value("${security.jwt.token.secret-key:secret-key}")
-	private String secretKey;
+	private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
-	@Value("${security.jwt.token.expire-length:3600000}")
-	private long validityInMilliseconds = 3600000;
+	@Value("${security.jwt.token.secret-key}")
+	private String jwtSecret;
 
-	private final MyUserDetails myUserDetails;
+	@Value("${security.jwt.token.expire-length}")
+	private int jwtExpirationInMs;
 
-	@Autowired
-	public JwtTokenProvider(@Qualifier("userDetails") MyUserDetails myUserDetails) {
-		this.myUserDetails = myUserDetails;
-	}
+	public String generateToken(Authentication authentication) {
 
-	@PostConstruct
-	protected void init() {
-		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-	}
-
-	public String createToken(String email, List<Role> roles) {
-
-		Claims claims = Jwts.claims().setSubject(email);
-		claims.put("auth", roles.stream().map(s -> new SimpleGrantedAuthority(s.getAuthority())).filter(Objects::nonNull).collect(Collectors.toList()));
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
 		Date now = new Date();
-		Date validity = new Date(now.getTime() + validityInMilliseconds);
+		Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
 		return Jwts.builder()
-				.setClaims(claims)
-				.setIssuedAt(now)
-				.setExpiration(validity)
-				.signWith(SignatureAlgorithm.HS256, secretKey)
+				.setSubject(userDetails.getUsername())
+				.setIssuedAt(new Date())
+				.setExpiration(expiryDate)
+				.signWith(SignatureAlgorithm.HS512, jwtSecret)
 				.compact();
 	}
 
-	public Authentication getAuthentication(String token) {
-		UserDetails userDetails = myUserDetails.loadUserByUsername(getEmail(token));
+	public String getUserEmailFromJwt(String token) {
+		Claims claims = Jwts.parser()
+				.setSigningKey(jwtSecret)
+				.parseClaimsJws(token)
+				.getBody();
 
-		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+		return claims.getSubject();
 	}
 
-	public String getEmail(String token) {
-		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
-	}
-
-	public String resolveToken(HttpServletRequest req) {
-		String bearerToken = req.getHeader("Authorization");
-		if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-			return bearerToken.substring(7);
-		}
-		return null;
-	}
-
-	public boolean validateToken(String token) {
+	public boolean validateToken(String authToken) {
 		try {
-			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+			Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
 			return true;
-		} catch (JwtException | IllegalArgumentException e) {
-			throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (SignatureException ex) {
+			logger.error("Invalid JWT signature");
+		} catch (MalformedJwtException ex) {
+			logger.error("Invalid JWT token");
+		} catch (ExpiredJwtException ex) {
+			logger.error("Expired JWT token");
+		} catch (UnsupportedJwtException ex) {
+			logger.error("Unsupported JWT token");
+		} catch (IllegalArgumentException ex) {
+			logger.error("JWT claims string is empty.");
 		}
+		return false;
 	}
 }
