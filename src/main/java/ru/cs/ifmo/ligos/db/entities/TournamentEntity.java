@@ -33,7 +33,7 @@ public class TournamentEntity implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "addressid", nullable = false)
-	private AddressEntity addressid;
+	private AddressEntity address;
 
 	@Column(name = "raiting")
 	private Short raiting;

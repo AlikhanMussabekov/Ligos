@@ -20,11 +20,11 @@ public class SectionUsersEntity  implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "section_detailsid", nullable = false)
-	private SectionDetailsEntity sectionDetailsid;
+	private SectionDetailsEntity sectionDetails;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "userid", nullable = false)
-	private UsersEntity userid;
+	private UsersEntity user;
 
 	@Column(name = "present", nullable = false)
 	private Boolean present;

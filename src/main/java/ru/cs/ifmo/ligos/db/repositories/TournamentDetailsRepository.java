@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface TournamentDetailsRepository extends JpaRepository<TournamentDetailsEntity, Long> {
 
-	List<TournamentDetailsEntity> findAllByTournamentid(TournamentEntity tournamentEntity);
+	List<TournamentDetailsEntity> findAllByTournament(TournamentEntity tournamentEntity);
 
 }

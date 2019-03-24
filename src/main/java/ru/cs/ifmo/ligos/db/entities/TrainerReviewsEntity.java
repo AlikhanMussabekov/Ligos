@@ -21,11 +21,11 @@ public class TrainerReviewsEntity  implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY,optional = false)
 	@JoinColumn(name = "traineruserid", nullable = false)
-	private TrainerEntity traineruserid;
+	private TrainerEntity traineruser;
 
 	@ManyToOne(fetch = FetchType.LAZY,optional = false)
 	@JoinColumn(name = "userid", nullable = false)
-	private UsersEntity userid;
+	private UsersEntity user;
 
 	@Column(name = "review", nullable = false, length = -1)
 	private String review;

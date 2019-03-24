@@ -33,15 +33,20 @@ spring:
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             preferTokenInfo: true
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 200MB
+      file-size-threshold: 2KB
+      max-request-size: 215MB
+
 
 
 security:
   jwt:
     token:
       secret-key: ${tokenSecretKey}
-      expire-length: 36000
-
-
+      expire-length: 3_600_000
 
 UserController:
   signin: Authenticates user and returns its JWT token.

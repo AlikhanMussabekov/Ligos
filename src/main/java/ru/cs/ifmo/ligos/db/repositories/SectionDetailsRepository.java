@@ -10,12 +10,13 @@ import java.awt.print.Pageable;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface SectionDetailsRepository extends JpaRepository<SectionDetailsEntity, Long> {
 
-	List<SectionDetailsEntity> findAllBySectionid(SectionEntity sectionEntity);
+	Optional<List<SectionDetailsEntity>> findAllBySection(SectionEntity sectionEntity);
 
-	@Query("select sde.sectionid from SectionDetailsEntity sde where sde.ageCategoryid = ?1")
+	@Query("select sde.section from SectionDetailsEntity sde where sde.ageCategory = ?1")
 	List<SectionEntity> selectSectionsByAgeCategory(AgeCategoryEntity ageCategoryEntity, Pageable pageable);
 
 }

@@ -17,8 +17,10 @@ import ru.cs.ifmo.ligos.db.entities.UsersEntity;
 import ru.cs.ifmo.ligos.db.repositories.RoleRepository;
 import ru.cs.ifmo.ligos.db.repositories.UserRepository;
 import ru.cs.ifmo.ligos.dto.ApiResponse;
+import ru.cs.ifmo.ligos.exception.CustomException;
 import ru.cs.ifmo.ligos.security.jwt.JwtAuthenticationResponse;
 import ru.cs.ifmo.ligos.security.jwt.JwtTokenProvider;
+import ru.cs.ifmo.ligos.security.oauth2.UserPrincipal;
 
 import java.net.URI;
 import java.util.Optional;
@@ -33,25 +35,14 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final AuthenticationManager authenticationManager;
-	private final RoleRepository roleRepository;
 
 	@Autowired
 	public UserService(UserRepository repository, PasswordEncoder passwordEncoder,
-					   JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager,
-					   RoleRepository roleRepository) {
+					   JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
 		this.repository = repository;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtTokenProvider = jwtTokenProvider;
 		this.authenticationManager = authenticationManager;
-		this.roleRepository = roleRepository;
-	}
-
-	public Optional<UsersEntity> getUserByEmail(String email){
-		return repository.findByEmail(email);
-	}
-
-	public void save(UsersEntity user){
-		repository.save(user);
 	}
 
 	public ResponseEntity<?> signin(String email, String password) {
@@ -71,22 +62,20 @@ public class UserService {
 		}
 
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-/*
-
-		Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
-				.orElseThrow(() -> new CustomException("User Role not set.", HttpStatus.BAD_REQUEST));
-
-		//user.setRoles(Collections.singleton(userRole));
-*/
 
 		UsersEntity result = repository.save(user);
 
 		URI location = ServletUriComponentsBuilder
-				.fromCurrentContextPath().path("/api/users/{username}")
-				.buildAndExpand(result.getEmail()).toUri();
+				.fromCurrentContextPath().path("/users/{id}")
+				.buildAndExpand(result.getId()).toUri();
 
 		return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
 
+	}
+
+	public ResponseEntity<?> getCurrentUser(String email){
+		return ResponseEntity.ok(repository.findByEmail(email)
+				.orElseThrow(() -> new CustomException("User not found",HttpStatus.BAD_REQUEST )));
 	}
 
 }

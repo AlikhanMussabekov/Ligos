@@ -25,11 +25,11 @@ public class TeamEntity implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "trainerid", nullable = true)
-	private TrainerEntity trainerid;
+	private TrainerEntity trainer;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "captainid", nullable = false)
-	private UsersEntity captainid;
+	private UsersEntity captain;
 
 	@Column(name = "name", nullable = false, length = 255)
 	private String name;

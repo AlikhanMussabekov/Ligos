@@ -1,5 +1,6 @@
 package ru.cs.ifmo.ligos.db.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,15 +23,16 @@ public class TrainerEntity implements Serializable {
 	@MapsId
 	@OneToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "userid", nullable = false)
-	private UsersEntity userid;
+	private UsersEntity user;
 
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "organizationid", nullable = false)
-	private OrganizationEntity organizationid;
+	private OrganizationEntity organization;
 
 	@Column(name = "raiting", nullable = false)
 	private Short raiting;
 
-	@OneToMany(fetch = FetchType.LAZY ,mappedBy = "trainerid")
+	@OneToMany(fetch = FetchType.LAZY ,mappedBy = "trainer")
 	private Set<TeamEntity> teams;
 }

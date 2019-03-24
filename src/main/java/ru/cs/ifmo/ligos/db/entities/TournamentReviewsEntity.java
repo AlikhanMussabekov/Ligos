@@ -21,7 +21,7 @@ public class TournamentReviewsEntity implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "tournamentid", nullable = false)
-	private TournamentEntity tournamentid;
+	private TournamentEntity tournament;
 
 	@Column(name = "review", nullable = false, length = -1)
 	private String review;

@@ -72,15 +72,10 @@ public class OrganizationService {
 
 		organization.setPassword(passwordEncoder.encode(organization.getPassword()));
 
-		/*Role organizationRole = roleRepository.findByName(RoleName.ROLE_ORGANIZATION)
-				.orElseThrow(() -> new CustomException("User Role not set.", HttpStatus.BAD_REQUEST));
-
-		organization.setRoles(Collections.singleton(organizationRole));
-*/
 		OrganizationEntity result = repository.save(organization);
 
 		URI location = ServletUriComponentsBuilder
-				.fromCurrentContextPath().path("/api/users/{username}")
+				.fromCurrentContextPath().path("/organization/{id}")
 				.buildAndExpand(result.getEmail()).toUri();
 
 		return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));

@@ -21,10 +21,10 @@ public class AgeCategoryEntity implements Serializable {
 	@Column(name = "id", nullable = false)
 	private Integer id;
 
-	@Column(name = "FROM", nullable = false)
+	@Column(name = "age_from", nullable = false)
 	private Integer from;
 
-	@Column(name = "TO", nullable = false)
+	@Column(name = "age_to", nullable = false)
 	private Integer to;
 
 }

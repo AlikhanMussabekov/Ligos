@@ -20,14 +20,14 @@ import java.util.Optional;
 
 @Service("userDetails")
 @Qualifier("userDetails")
-public class MyUserDetails implements UserDetailsService {
+public class MyUserDetailsService implements UserDetailsService {
 
 	private final UserRepository userRepository;
 	private final OrganizationRepository organizationRepository;
 
 	@Autowired
-	public MyUserDetails(UserRepository userRepository,
-						 OrganizationRepository organizationRepository) {
+	public MyUserDetailsService(UserRepository userRepository,
+								OrganizationRepository organizationRepository) {
 		this.userRepository = userRepository;
 		this.organizationRepository = organizationRepository;
 	}

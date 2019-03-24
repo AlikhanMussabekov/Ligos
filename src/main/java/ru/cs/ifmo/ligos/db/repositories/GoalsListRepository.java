@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface GoalsListRepository extends JpaRepository<GoalsListEntity, Long> {
 
-	List<GoalsListEntity> findAllByMatcheid(MatchesEntity matchesEntity);
+	List<GoalsListEntity> findAllByMatch(MatchesEntity matchesEntity);
 
 }

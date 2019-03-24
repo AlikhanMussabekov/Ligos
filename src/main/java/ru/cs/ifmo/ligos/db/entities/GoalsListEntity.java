@@ -24,12 +24,12 @@ public class GoalsListEntity implements Serializable {
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-	@JoinColumn(name = "matcheid", nullable = false)
-	private MatchesEntity matcheid;
+	@JoinColumn(name = "matchid", nullable = false)
+	private MatchesEntity match;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "userid", nullable = false)
-	private UsersEntity userid;
+	private UsersEntity user;
 
 	@Column(name = "time", nullable = false)
 	private Date time;

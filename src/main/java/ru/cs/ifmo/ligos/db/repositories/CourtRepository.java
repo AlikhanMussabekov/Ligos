@@ -11,6 +11,6 @@ public interface CourtRepository extends JpaRepository<CourtEntity, Long> {
 
 	List<CourtEntity> findTopByRaitingOrderByRaitingDesc(Short num);
 
-	List<CourtRepository> findAllByAddressid(AddressEntity addressEntity);
+	List<CourtRepository> findAllByAddress(AddressEntity addressEntity);
 
 }

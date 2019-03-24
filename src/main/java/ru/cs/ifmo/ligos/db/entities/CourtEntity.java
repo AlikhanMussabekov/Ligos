@@ -24,7 +24,7 @@ public class CourtEntity implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "organizationid", nullable = false)
-	private OrganizationEntity organizationid;
+	private OrganizationEntity organization;
 
 	@Column(name = "name", nullable = false, length = 255)
 	private String name;
@@ -38,7 +38,7 @@ public class CourtEntity implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "addressid", nullable = false)
-	private AddressEntity addressid;
+	private AddressEntity address;
 
 	@Column(name = "raiting", nullable = false)
 	private Short raiting;

@@ -11,5 +11,4 @@ import java.util.List;
 public interface SectionRepository extends JpaRepository<SectionEntity, Long> {
 
 	List<SectionEntity> findTopByRaitingOrderByRaitingDesc(Short num);
-
 }

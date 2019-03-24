@@ -24,11 +24,11 @@ public class MessageEntity implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "chatid", nullable = false)
-	private ChatEntity chatid;
+	private ChatEntity chat;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "senderid", nullable = false)
-	private UsersEntity senderid;
+	private UsersEntity sender;
 
 	@Column(name = "context", nullable = false, length = -1)
 	private String context;

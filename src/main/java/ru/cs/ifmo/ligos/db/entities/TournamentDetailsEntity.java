@@ -25,11 +25,11 @@ public class TournamentDetailsEntity implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "age_categoryid", nullable = false)
-	private AgeCategoryEntity ageCategoryid;
+	private AgeCategoryEntity ageCategory;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "tournamentid", nullable = false)
-	private TournamentEntity tournamentid;
+	private TournamentEntity tournament;
 
 	@Column(name = "price", nullable = false)
 	private Integer price;

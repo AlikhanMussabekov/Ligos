@@ -1,8 +1,8 @@
 package ru.cs.ifmo.ligos.db.entities;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,6 +13,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "section_details", schema = "public", catalog = "ligos")
 public class SectionDetailsEntity implements Serializable {
 
@@ -22,17 +25,18 @@ public class SectionDetailsEntity implements Serializable {
 	@Column(name = "id", nullable = false)
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "age_categoryid", nullable = false)
-	private AgeCategoryEntity ageCategoryid;
+	private AgeCategoryEntity ageCategory;
 
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "sectionid", nullable = false)
-	private SectionEntity sectionid;
+	private SectionEntity section;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "trainerid", nullable = false)
-	private UsersEntity trainerid;
+	private TrainerEntity trainer;
 
 	@Column(name = "price", nullable = false)
 	private Integer price;

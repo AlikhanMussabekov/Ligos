@@ -24,7 +24,7 @@ public class MatchesEntity implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "tournamentid", nullable = true)
-	private TournamentEntity tournamentid;
+	private TournamentEntity tournament;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "team_first", nullable = false)
@@ -36,11 +36,11 @@ public class MatchesEntity implements Serializable {
 
 	@OneToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "stageid", nullable = false)
-	private StagesEntity stageid;
+	private StagesEntity stage;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "courtid", nullable = false)
-	private CourtEntity courtid;
+	private CourtEntity court;
 
 	@Column(name = "DATE", nullable = false)
 	private Date date;

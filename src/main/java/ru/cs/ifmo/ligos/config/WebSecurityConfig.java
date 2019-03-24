@@ -14,9 +14,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import ru.cs.ifmo.ligos.security.jwt.JwtAuthenticationEntryPoint;
 import ru.cs.ifmo.ligos.security.jwt.JwtAuthenticationFilter;
-import ru.cs.ifmo.ligos.security.MyUserDetails;
+import ru.cs.ifmo.ligos.security.MyUserDetailsService;
 import ru.cs.ifmo.ligos.security.oauth2.CustomOAuth2UserService;
 import ru.cs.ifmo.ligos.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import ru.cs.ifmo.ligos.security.oauth2.OAuth2AuthenticationFailureHandler;
@@ -29,7 +30,7 @@ import ru.cs.ifmo.ligos.security.oauth2.OAuth2AuthenticationSuccessHandler;
 		jsr250Enabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private final MyUserDetails myUserDetails;
+	private final MyUserDetailsService myUserDetailsService;
 	private final JwtAuthenticationEntryPoint unauthorizedHandler;
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
@@ -39,18 +40,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 	@Autowired
-	public WebSecurityConfig(MyUserDetails myUserDetails,
+	public WebSecurityConfig(MyUserDetailsService myUserDetailsService,
 							 JwtAuthenticationEntryPoint unauthorizedHandler,
 							 CustomOAuth2UserService customOAuth2UserService,
 							 OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
 							 OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler,
 							 HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository) {
-		this.myUserDetails = myUserDetails;
+		this.myUserDetailsService = myUserDetailsService;
 		this.unauthorizedHandler = unauthorizedHandler;
 		this.customOAuth2UserService = customOAuth2UserService;
 		this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
 		this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
 		this.httpCookieOAuth2AuthorizationRequestRepository = httpCookieOAuth2AuthorizationRequestRepository;
+	}
+
+	@Bean
+	public AuthenticationPrincipalArgumentResolver authenticationPrincipalArgumentResolver(){
+		return new AuthenticationPrincipalArgumentResolver();
 	}
 
 	@Bean
@@ -66,7 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
 		authenticationManagerBuilder
-				.userDetailsService(myUserDetails)
+				.userDetailsService(myUserDetailsService)
 				.passwordEncoder(passwordEncoder());
 	}
 
@@ -105,7 +111,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 						"/**/*.css",
 						"/**/*.js")
 					.permitAll()
-				.antMatchers("/users/*")
+				.antMatchers("/users/*", "/section/**")
 					.permitAll()
 				.antMatchers("/organizations/*")
 					.permitAll()

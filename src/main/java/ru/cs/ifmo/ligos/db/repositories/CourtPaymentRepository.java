@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface CourtPaymentRepository extends JpaRepository<CourtPaymentEntity, Long> {
 
-	List<CourtPaymentEntity> findAllByCourtid(CourtEntity courtEntity);
+	List<CourtPaymentEntity> findAllByCourt(CourtEntity courtEntity);
 
 }

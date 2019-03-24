@@ -1,5 +1,7 @@
 package ru.cs.ifmo.ligos.db.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.springframework.format.annotation.NumberFormat;
 
@@ -15,6 +17,7 @@ import java.util.*;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Table(name = "users", schema = "public", catalog = "ligos")
 public class UsersEntity implements Serializable {
 
@@ -28,6 +31,7 @@ public class UsersEntity implements Serializable {
 	@Column(name = "email", nullable = false, length = 254, unique = true)
 	private String email;
 
+	@JsonIgnore
 	@Column(name = "password", nullable = true, length = 255)
 	private String password;
 
@@ -59,16 +63,19 @@ public class UsersEntity implements Serializable {
 	@Column(name = "raiting", nullable = true)
 	private Short raiting;
 
+	@JsonIgnore
 	@Column(name = "auth_type", nullable = false, length = 30)
 	@Enumerated(EnumType.STRING)
 	private AuthType authType;
 
+	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "chat_users",
 			joinColumns = @JoinColumn(name = "usersid", referencedColumnName = "id"),
 			inverseJoinColumns = @JoinColumn(name = "chatid", referencedColumnName = "id"))
 	private Set<UsersEntity> chats;
 
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "userid")
+	@JsonIgnore
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
 	private TrainerEntity trainer;
 }
