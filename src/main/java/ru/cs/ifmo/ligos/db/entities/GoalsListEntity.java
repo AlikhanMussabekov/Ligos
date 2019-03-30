@@ -21,7 +21,7 @@ public class GoalsListEntity implements Serializable {
 	@SequenceGenerator(name = "goals_list_id_seq", sequenceName = "goals_list_id_seq",allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "goals_list_id_seq")
 	@Column(name = "id", nullable = false)
-	private Integer id;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "matchid", nullable = false)

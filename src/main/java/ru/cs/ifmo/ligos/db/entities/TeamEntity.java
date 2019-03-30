@@ -21,7 +21,7 @@ public class TeamEntity implements Serializable {
 	@SequenceGenerator(name = "team_id_seq", sequenceName = "team_id_seq",allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "team_id_seq")
 	@Column(name = "id", nullable = false)
-	private Integer id;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "trainerid", nullable = true)
@@ -38,6 +38,4 @@ public class TeamEntity implements Serializable {
 	@Column(name = "photo", nullable = true)
 	private byte[] photo;
 
-	@ManyToMany(mappedBy = "teams")
-	private Set<TournamentDetailsEntity> tournaments;
 }

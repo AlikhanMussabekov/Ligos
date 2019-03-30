@@ -17,11 +17,13 @@ import ru.cs.ifmo.ligos.db.entities.UsersEntity;
 import ru.cs.ifmo.ligos.db.repositories.RoleRepository;
 import ru.cs.ifmo.ligos.db.repositories.UserRepository;
 import ru.cs.ifmo.ligos.dto.ApiResponse;
+import ru.cs.ifmo.ligos.dto.UserDataFullDTO;
 import ru.cs.ifmo.ligos.exception.CustomException;
 import ru.cs.ifmo.ligos.security.jwt.JwtAuthenticationResponse;
 import ru.cs.ifmo.ligos.security.jwt.JwtTokenProvider;
 import ru.cs.ifmo.ligos.security.oauth2.UserPrincipal;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
 
@@ -70,6 +72,53 @@ public class UserService {
 				.buildAndExpand(result.getId()).toUri();
 
 		return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
+
+	}
+
+	public ResponseEntity<?> updateUserInfo(Authentication auth, UserDataFullDTO userDataFullDTO){
+
+		Optional<UsersEntity> authUser = repository.findByEmail(auth.getName());
+
+		if (authUser.isPresent()){
+
+			try{
+				/*Optional<UsersEntity> updatedUser = repository.updateInfo(
+						userDataFullDTO.getSurname(),
+						userDataFullDTO.getPatronymic(),
+						userDataFullDTO.getPhoneNumber(),
+						userDataFullDTO.getCity(),
+						userDataFullDTO.getGender(),
+						userDataFullDTO.getBirthday(),
+						userDataFullDTO.getPhoto().getBytes(),
+						authUser.get().getId(userDataFullDTO.getPhoto().getBytes())
+						);
+				*/
+
+				authUser.get().setSurname(userDataFullDTO.getSurname());
+				authUser.get().setPatronymic(userDataFullDTO.getPatronymic());
+				authUser.get().setPhoneNumber(userDataFullDTO.getPhoneNumber());
+				authUser.get().setCity(userDataFullDTO.getCity());
+				authUser.get().setGender(userDataFullDTO.getGender());
+				authUser.get().setBirthday(userDataFullDTO.getBirthday());
+				authUser.get().setPhoto(userDataFullDTO.getPhoto().getBytes());
+				repository.save(authUser.get());
+
+
+
+				URI location = ServletUriComponentsBuilder
+						.fromCurrentContextPath().path("/users/{id}")
+						.buildAndExpand(authUser.get().getId()).toUri();
+
+				return ResponseEntity.accepted().body(new ApiResponse(true, "User info updated successfully"));
+
+			}catch (IOException e){
+				throw new CustomException("Photo serialization failed", HttpStatus.UNPROCESSABLE_ENTITY);
+			}
+
+
+		}else{
+			return ResponseEntity.badRequest().body("Token invalid");
+		}
 
 	}
 

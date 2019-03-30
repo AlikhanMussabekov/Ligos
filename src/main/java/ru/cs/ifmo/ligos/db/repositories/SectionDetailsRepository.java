@@ -19,4 +19,6 @@ public interface SectionDetailsRepository extends JpaRepository<SectionDetailsEn
 	@Query("select sde.section from SectionDetailsEntity sde where sde.ageCategory = ?1")
 	List<SectionEntity> selectSectionsByAgeCategory(AgeCategoryEntity ageCategoryEntity, Pageable pageable);
 
+	Optional<SectionDetailsEntity> findByIdAndSection(Long id, SectionEntity sectionEntity);
+
 }

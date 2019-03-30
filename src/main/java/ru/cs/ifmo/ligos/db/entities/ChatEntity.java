@@ -21,7 +21,7 @@ public class ChatEntity implements Serializable {
 	@SequenceGenerator(name = "chat_id_seq", sequenceName = "chat_id_seq",allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chat_id_seq")
 	@Column(name = "id", nullable = false)
-	private Integer id;
+	private Long id;
 
 	@Column(name = "created", nullable = false)
 	private Date created;

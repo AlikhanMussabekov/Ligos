@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -23,7 +24,7 @@ public class SectionDetailsEntity implements Serializable {
 	@SequenceGenerator(name = "section_details_id_seq", sequenceName = "section_details_id_seq",allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "section_details_id_seq")
 	@Column(name = "id", nullable = false)
-	private Integer id;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "age_categoryid", nullable = false)
@@ -49,4 +50,8 @@ public class SectionDetailsEntity implements Serializable {
 
 	@Column(name = "max_users_count", nullable = false)
 	private Integer maxUsersCount;
+
+	@OneToMany(mappedBy = "sectionDetails", cascade = CascadeType.ALL)
+	private Set<AttendanceEntity> attendance;
+
 }

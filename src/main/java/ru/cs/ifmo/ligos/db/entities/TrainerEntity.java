@@ -18,7 +18,7 @@ import java.util.Set;
 public class TrainerEntity implements Serializable {
 
 	@Id
-	private Integer id;
+	private Long id;
 
 	@MapsId
 	@OneToOne(fetch = FetchType.LAZY, optional = false)

@@ -19,7 +19,7 @@ public class AgeCategoryEntity implements Serializable {
 	@SequenceGenerator(name = "age_category_id_seq", sequenceName = "age_category_id_seq",allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "age_category_id_seq")
 	@Column(name = "id", nullable = false)
-	private Integer id;
+	private Long id;
 
 	@Column(name = "age_from", nullable = false)
 	private Integer from;

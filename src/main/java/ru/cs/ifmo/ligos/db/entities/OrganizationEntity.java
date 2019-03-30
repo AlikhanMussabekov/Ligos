@@ -3,6 +3,7 @@ package ru.cs.ifmo.ligos.db.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,7 +28,7 @@ public class OrganizationEntity implements Serializable {
 	@SequenceGenerator(name = "organization_id_seq", sequenceName = "organization_id_seq",allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "organization_id_seq")
 	@Column(name = "id", nullable = false)
-	private Integer id;
+	private Long id;
 
 	@Column(name = "email", nullable = false, length = 254)
 	private String email;
@@ -39,6 +40,7 @@ public class OrganizationEntity implements Serializable {
 	@Column(name = "name", nullable = true, length = 255)
 	private String name;
 
+	@Type(type = "org.hibernate.type.BinaryType")
 	@Column(name = "photo", nullable = true)
 	private byte[] photo;
 

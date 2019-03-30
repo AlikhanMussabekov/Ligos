@@ -20,7 +20,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SectionDTO {
+public class EventDTO {
 
 	@ApiModelProperty(position = 0)
 	private String name;

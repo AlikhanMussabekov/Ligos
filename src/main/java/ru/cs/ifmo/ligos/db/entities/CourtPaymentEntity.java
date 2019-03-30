@@ -1,23 +1,28 @@
 package ru.cs.ifmo.ligos.db.entities;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @EqualsAndHashCode
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "court_payment", schema = "public", catalog = "ligos")
 public class CourtPaymentEntity implements Serializable {
 
 	@Id
-	private Integer id;
+	@SequenceGenerator(name = "court_payment_id_seq", sequenceName = "court_payment_id_seq",allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "court_payment_id_seq")
+	@Column(name = "id", nullable = false)
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "courtid", nullable = false)
@@ -26,12 +31,19 @@ public class CourtPaymentEntity implements Serializable {
 	@Column(name = "price", nullable = false)
 	private Integer price;
 
-	@Column(name = "FROM", nullable = false)
+	@Column(name = "hour_from", nullable = false)
 	private Date from;
 
-	@Column(name = "TO", nullable = false)
+	@Column(name = "hour_to", nullable = false)
 	private Date to;
 
 	@Column(name = "status", nullable = false)
 	private Boolean status;
+
+	@Column(name = "date", nullable = false)
+	private Date date;
+
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "usersid", nullable = false)
+	private UsersEntity user;
 }

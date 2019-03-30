@@ -3,6 +3,8 @@ package ru.cs.ifmo.ligos.db.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.Type;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
@@ -25,7 +27,7 @@ public class UsersEntity implements Serializable {
 	@SequenceGenerator(name = "user_id_seq", sequenceName = "users_id_seq",allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
 	@Column(name = "id", nullable = false)
-	private Integer id;
+	private Long id;
 
 	@Email
 	@Column(name = "email", nullable = false, length = 254, unique = true)
@@ -57,6 +59,7 @@ public class UsersEntity implements Serializable {
 	@Column(name = "birthday", nullable = true)
 	private Date birthday;
 
+	@Type(type = "org.hibernate.type.BinaryType")
 	@Column(name = "photo", nullable = true)
 	private byte[] photo;
 
@@ -76,6 +79,12 @@ public class UsersEntity implements Serializable {
 	private Set<UsersEntity> chats;
 
 	@JsonIgnore
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
 	private TrainerEntity trainer;
+
+	@Builder.Default
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private Set<AttendanceEntity> attendance = new HashSet<>();
+
 }

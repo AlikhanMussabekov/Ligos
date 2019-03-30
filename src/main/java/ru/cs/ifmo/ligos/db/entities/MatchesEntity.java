@@ -20,11 +20,7 @@ public class MatchesEntity implements Serializable {
 	@SequenceGenerator(name = "matches_id_seq", sequenceName = "matches_id_seq",allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "matches_id_seq")
 	@Column(name = "id", nullable = false)
-	private Integer id;
-
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-	@JoinColumn(name = "tournamentid", nullable = true)
-	private TournamentEntity tournament;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "team_first", nullable = false)

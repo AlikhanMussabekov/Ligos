@@ -20,7 +20,7 @@ public class MessageEntity implements Serializable {
 	@SequenceGenerator(name = "message_id_seq", sequenceName = "message_id_seq",allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "message_id_seq")
 	@Column(name = "id", nullable = false)
-	private Integer id;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "chatid", nullable = false)

@@ -2,10 +2,13 @@ package ru.cs.ifmo.ligos.controllers;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.annotations.ApiOperation;
@@ -16,10 +19,13 @@ import io.swagger.annotations.ApiResponses;
 import ru.cs.ifmo.ligos.db.entities.UsersEntity;
 import ru.cs.ifmo.ligos.db.services.UserService;
 import ru.cs.ifmo.ligos.dto.UserDataDTO;
+import ru.cs.ifmo.ligos.dto.UserDataFullDTO;
 import ru.cs.ifmo.ligos.security.CurrentUser;
 import ru.cs.ifmo.ligos.security.oauth2.UserPrincipal;
 
 import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/users")
@@ -61,10 +67,23 @@ public class AuthorizationController {
 		return userService.signup(modelMapper.map(user, UsersEntity.class));
 	}
 
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@PutMapping(value = "/signup")
+	@Procedure("application/json")
+	public ResponseEntity<?> updateUserInfo(@ApiParam("Full user info") UserDataFullDTO userDataFullDTO,
+											Authentication auth){
+		return userService.updateUserInfo(auth, userDataFullDTO);
+	}
+
 	@GetMapping("/user/me")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public ResponseEntity<?> getCurrentUser(Authentication authentication) {
 		return userService.getCurrentUser(authentication.getName());
 	}
 
+	@InitBinder
+	protected void initBinder(WebDataBinder binder){
+		binder.registerCustomEditor(Date.class,
+				new CustomDateEditor(new SimpleDateFormat("dd/MM/yyyy"), true, 10));
+	}
 }

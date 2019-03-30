@@ -10,9 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import ru.cs.ifmo.ligos.db.entities.SectionDetailsEntity;
+import ru.cs.ifmo.ligos.db.entities.CourtReviewEntity;
+import ru.cs.ifmo.ligos.db.entities.SectionReviewEntity;
 import ru.cs.ifmo.ligos.db.services.SectionService;
-import ru.cs.ifmo.ligos.dto.SectionDTO;
+import ru.cs.ifmo.ligos.dto.EventDTO;
 import ru.cs.ifmo.ligos.dto.SectionDetailsDTO;
 
 @RestController
@@ -39,13 +40,13 @@ public class SectionController {
 			@ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token")})
-	public ResponseEntity<?> createSection(@ApiParam("Section params")SectionDTO section, Authentication auth){
+	public ResponseEntity<?> createSection(@ApiParam("Section params") EventDTO section, Authentication auth){
 		return sectionService.createSection(section, auth);
 	}
 
 	@GetMapping("/{id}")
 	@Procedure("application/json")
-	@ApiOperation(value = "${SectionsController.createSection}")
+	@ApiOperation(value = "${SectionsController.getSection}")
 	@ApiResponses(value = {
 			@ApiResponse(code = 400, message = "Something went wrong")})
 	public ResponseEntity<?> getSectionById(@PathVariable Long id){
@@ -71,8 +72,50 @@ public class SectionController {
 	@ApiOperation(value = "${SectionsController.getSectionDetails}")
 	@ApiResponses(value = {
 			@ApiResponse(code = 400, message = "Something went wrong")})
-	public ResponseEntity<?> createDetails(@ApiParam("Section id") @PathVariable Long id){
+	public ResponseEntity<?> getDetails(@ApiParam("Section id") @PathVariable Long id){
 		return sectionService.getSectionDetails(id);
+	}
+
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@PostMapping("/{sectionId}/details/{detailsId}/register")
+	@Procedure("application/json")
+	@ApiOperation(value = "${SectionsController.registerToSection}")
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Something went wrong"),
+			@ApiResponse(code = 403, message = "Access denied"),
+			@ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+	public ResponseEntity<?> registerToSection(Authentication auth,
+											   @ApiParam("Section id") Long sectionId,
+											   @ApiParam("Section Details id") Long sectionDetailsId){
+		return sectionService.registerToSection(auth, sectionId, sectionDetailsId);
+	}
+
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@PostMapping("/{id}/review")
+	@ApiOperation(value = "${SectionController.addSectionReview}")
+	public ResponseEntity<?> addReview(Authentication auth,
+									   @ApiParam("Section id") @PathVariable Long id,
+									   @ApiParam("Review body") @RequestBody SectionReviewEntity review){
+		return sectionService.addReview(auth, id, review);
+	}
+
+	@GetMapping("/{id}/reviews")
+	@Procedure("application/json")
+	@ApiOperation(value = "${SectionController.getSectionReviews}")
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Something went wrong")})
+	public ResponseEntity<?> getReviews(@ApiParam("Section id") @PathVariable Long id){
+		return sectionService.getReviews(id);
+	}
+
+	@GetMapping("/{id}/reviews/{reviewId}")
+	@Procedure("application/json")
+	@ApiOperation(value = "${SectionController.getSectionReview}")
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Something went wrong")})
+	public ResponseEntity<?> getReview(@ApiParam("Section id") @PathVariable Long id,
+									   @ApiParam("Review id") @PathVariable Long reviewId){
+		return sectionService.getReview(id, reviewId);
 	}
 
 }
