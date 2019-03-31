@@ -133,6 +133,7 @@ public class TeamService {
 	}
 
 	public ResponseEntity<?> removeUserFromTeam(Authentication auth,
+												Long teamId,
 												Long userId){
 		//todo
 
@@ -140,6 +141,7 @@ public class TeamService {
 	}
 
 	public ResponseEntity<?> updateUserPosition(Authentication auth,
+												Long teamId,
 												Long userId,
 												Position newPosition){
 		//todo

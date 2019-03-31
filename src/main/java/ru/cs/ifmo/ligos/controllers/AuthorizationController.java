@@ -4,7 +4,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.jpa.repository.query.Procedure;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -17,27 +16,30 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import ru.cs.ifmo.ligos.db.entities.UsersEntity;
+import ru.cs.ifmo.ligos.db.services.MatchService;
 import ru.cs.ifmo.ligos.db.services.UserService;
 import ru.cs.ifmo.ligos.dto.UserDataDTO;
 import ru.cs.ifmo.ligos.dto.UserDataFullDTO;
-import ru.cs.ifmo.ligos.security.CurrentUser;
-import ru.cs.ifmo.ligos.security.oauth2.UserPrincipal;
 
-import java.security.Principal;
+import javax.websocket.server.PathParam;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class AuthorizationController {
 
 	private final UserService userService;
 	private final ModelMapper modelMapper;
+	private final MatchService matchService;
 
 	@Autowired
-	public AuthorizationController(UserService userService, ModelMapper modelMapper) {
+	public AuthorizationController(UserService userService,
+								   ModelMapper modelMapper,
+								   MatchService matchService) {
 		this.userService = userService;
 		this.modelMapper = modelMapper;
+		this.matchService = matchService;
 	}
 
 	@GetMapping
@@ -86,4 +88,21 @@ public class AuthorizationController {
 		binder.registerCustomEditor(Date.class,
 				new CustomDateEditor(new SimpleDateFormat("dd/MM/yyyy"), true, 10));
 	}
+
+	@GetMapping("/{id}/goals")
+	public ResponseEntity<?> getUserGoals(@PathParam("id") Long id){
+		return matchService.getGoalsByUserId(id);
+	}
+
+	@GetMapping("/{id}/match/all")
+	public ResponseEntity<?> getAllMatchInfo(@PathParam("id") Long id){
+		return matchService.getUserMatchInfo(id);
+	}
+
+	@GetMapping("/{id}/match/{matchId}")
+	public ResponseEntity<?> getUserMatchInfoByMatch(@PathParam("id") Long id,
+													 @PathParam("matchId") Long matchId){
+		return matchService.getUserMatchInfoByMatch(id,matchId);
+	}
+
 }

@@ -68,7 +68,7 @@ public class UserService {
 		UsersEntity result = repository.save(user);
 
 		URI location = ServletUriComponentsBuilder
-				.fromCurrentContextPath().path("/users/{id}")
+				.fromCurrentContextPath().path("/user/{id}")
 				.buildAndExpand(result.getId()).toUri();
 
 		return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
@@ -106,7 +106,7 @@ public class UserService {
 
 
 				URI location = ServletUriComponentsBuilder
-						.fromCurrentContextPath().path("/users/{id}")
+						.fromCurrentContextPath().path("/user/{id}")
 						.buildAndExpand(authUser.get().getId()).toUri();
 
 				return ResponseEntity.accepted().body(new ApiResponse(true, "User info updated successfully"));

@@ -36,7 +36,7 @@ public class MyUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
 		final Optional<UsersEntity> user = userRepository.findByEmail(email);
-		final OrganizationEntity organization = organizationRepository.findByEmail(email);
+		final OrganizationEntity organization = organizationRepository.findByEmail(email).get();
 
 		if (user.isPresent()){
 			return User

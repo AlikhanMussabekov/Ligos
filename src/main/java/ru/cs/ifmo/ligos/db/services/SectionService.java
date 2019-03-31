@@ -66,7 +66,7 @@ public class SectionService {
 
 		try {
 			SectionEntity section = SectionEntity.builder()
-					.organization(organizationRepository.findByEmail(auth.getName()))
+					.organization(organizationRepository.findByEmail(auth.getName()).get())
 					.name(eventDto.getName())
 					.description(eventDto.getDescription())
 					.photo(eventDto.getPhoto().getBytes())

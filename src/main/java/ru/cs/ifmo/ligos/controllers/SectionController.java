@@ -17,7 +17,7 @@ import ru.cs.ifmo.ligos.dto.EventDTO;
 import ru.cs.ifmo.ligos.dto.SectionDetailsDTO;
 
 @RestController
-@RequestMapping("section")
+@RequestMapping("/section")
 public class SectionController {
 
 	private final SectionService sectionService;

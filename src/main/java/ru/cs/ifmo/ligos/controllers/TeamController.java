@@ -19,7 +19,7 @@ import ru.cs.ifmo.ligos.dto.TeamUserDTO;
 import javax.websocket.server.PathParam;
 
 @RestController
-@RequestMapping("team")
+@RequestMapping("/team")
 public class TeamController {
 
 	private final TeamService teamService;
@@ -33,11 +33,18 @@ public class TeamController {
 	@Procedure("application/json")
 	@ApiOperation(value = "${TeamController.getAllTeams}")
 	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Something went wrong"),
-			@ApiResponse(code = 403, message = "Access denied"),
-			@ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+			@ApiResponse(code = 400, message = "Something went wrong")})
 	public ResponseEntity<?> getAllTeams(){
 		return teamService.getAllTeams();
+	}
+
+	@GetMapping("/byPosition")
+	@Procedure("application/json")
+	@ApiOperation(value = "${TeamController.getTeamsByPosition}")
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Something went wrong")})
+	public ResponseEntity<?> getTeamsByPosition(@RequestParam("position") Position position){
+		return teamService.findTeamByPosition(position);
 	}
 
 	@PostMapping
@@ -94,14 +101,14 @@ public class TeamController {
 	public ResponseEntity<?> removeUserFromTeam(Authentication auth,
 												@ApiParam("Team id") @PathParam("teamId") Long teamId,
 												@ApiParam("User id") @RequestParam("userId") Long userId){
-		return teamService.removeUserFromTeam(auth,userId);
+		return teamService.removeUserFromTeam(auth,teamId,userId);
 	}
 
 
 	@PutMapping("/{teamId/player}")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Procedure("application/json")
-	@ApiOperation(value = "${TeamController.removeUserFromTeam}")
+	@ApiOperation(value = "${TeamController.updateUserPosition}")
 	@ApiResponses(value = {
 			@ApiResponse(code = 400, message = "Something went wrong"),
 			@ApiResponse(code = 403, message = "Access denied"),
@@ -110,7 +117,7 @@ public class TeamController {
 												@ApiParam("Team id") @PathParam("teamId") Long teamId,
 												@ApiParam("User id") @RequestParam("userId") Long userId,
 												@ApiParam("New position") @RequestParam("newPosition") Position position){
-		return teamService.updateUserPosition(auth,teamId,position);
+		return teamService.updateUserPosition(auth,teamId,userId,position);
 	}
 
 }

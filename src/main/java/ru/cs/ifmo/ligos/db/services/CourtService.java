@@ -51,7 +51,7 @@ public class CourtService {
 									  EventDTO eventDto){
 		try {
 			CourtEntity court = CourtEntity.builder()
-					.organization(organizationRepository.findByEmail(auth.getName()))
+					.organization(organizationRepository.findByEmail(auth.getName()).get())
 					.name(eventDto.getName())
 					.description(eventDto.getDescription())
 					.photos(eventDto.getPhoto() == null ? null : eventDto.getPhoto().getBytes())

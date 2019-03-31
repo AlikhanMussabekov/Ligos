@@ -47,7 +47,7 @@ public class OrganizationService {
 	}
 
 	public OrganizationEntity getUserByEmail(String email){
-		return repository.findByEmail(email);
+		return repository.findByEmail(email).get();
 	}
 
 	public void save(OrganizationEntity organization){
