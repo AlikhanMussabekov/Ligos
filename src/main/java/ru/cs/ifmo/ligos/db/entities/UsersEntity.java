@@ -66,17 +66,13 @@ public class UsersEntity implements Serializable {
 	@Column(name = "raiting", nullable = true)
 	private Short raiting;
 
+	@Column(name = "isPresent")
+	private Boolean isPresent;
+
 	@JsonIgnore
 	@Column(name = "auth_type", nullable = false, length = 30)
 	@Enumerated(EnumType.STRING)
 	private AuthType authType;
-
-	@JsonIgnore
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "chat_users",
-			joinColumns = @JoinColumn(name = "usersid", referencedColumnName = "id"),
-			inverseJoinColumns = @JoinColumn(name = "chatid", referencedColumnName = "id"))
-	private Set<UsersEntity> chats;
 
 	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)

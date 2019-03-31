@@ -3,6 +3,7 @@ package ru.cs.ifmo.ligos.controllers;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

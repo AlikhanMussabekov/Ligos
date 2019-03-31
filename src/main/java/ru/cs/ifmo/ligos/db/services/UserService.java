@@ -6,22 +6,23 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.cs.ifmo.ligos.db.entities.UsersEntity;
-import ru.cs.ifmo.ligos.db.repositories.RoleRepository;
 import ru.cs.ifmo.ligos.db.repositories.UserRepository;
 import ru.cs.ifmo.ligos.dto.ApiResponse;
+import ru.cs.ifmo.ligos.dto.NotificationDTO;
 import ru.cs.ifmo.ligos.dto.UserDataFullDTO;
 import ru.cs.ifmo.ligos.exception.CustomException;
 import ru.cs.ifmo.ligos.security.jwt.JwtAuthenticationResponse;
 import ru.cs.ifmo.ligos.security.jwt.JwtTokenProvider;
-import ru.cs.ifmo.ligos.security.oauth2.UserPrincipal;
 
 import java.io.IOException;
 import java.net.URI;
@@ -37,14 +38,31 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final AuthenticationManager authenticationManager;
+	private final SimpMessagingTemplate simpMessagingTemplate;
 
 	@Autowired
-	public UserService(UserRepository repository, PasswordEncoder passwordEncoder,
-					   JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager) {
+	public UserService(UserRepository repository,
+					   PasswordEncoder passwordEncoder,
+					   JwtTokenProvider jwtTokenProvider,
+					   AuthenticationManager authenticationManager,
+					   SimpMessagingTemplate simpMessagingTemplate) {
 		this.repository = repository;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtTokenProvider = jwtTokenProvider;
 		this.authenticationManager = authenticationManager;
+		this.simpMessagingTemplate = simpMessagingTemplate;
+	}
+
+	public UsersEntity getUser(Long id){
+		return repository.findById(id).orElseThrow( () ->
+			new CustomException("Incorrect user id", HttpStatus.BAD_REQUEST)
+		);
+	}
+
+	public UsersEntity getUser(String email){
+		return repository.findByEmail(email).orElseThrow( () ->
+				new CustomException("Incorrect user email", HttpStatus.BAD_REQUEST)
+		);
 	}
 
 	public ResponseEntity<?> signin(String email, String password) {
@@ -127,4 +145,23 @@ public class UserService {
 				.orElseThrow(() -> new CustomException("User not found",HttpStatus.BAD_REQUEST )));
 	}
 
+	void setIsPresent(UsersEntity user, Boolean stat) {
+		user.setIsPresent(stat);
+		repository.save(user);
+	}
+
+	public Boolean isPresent(UsersEntity user) {
+		return user.getIsPresent();
+	}
+
+	void notifyUser(UsersEntity recipientUser, NotificationDTO notification) {
+
+		if (this.isPresent(recipientUser)) {
+			simpMessagingTemplate
+					.convertAndSend("/topic/user.notification." + recipientUser.getId(), notification);
+		} else {
+			logger.debug("sending email notification to " + recipientUser.getEmail());
+			// TODO: send email
+		}
+	}
 }
