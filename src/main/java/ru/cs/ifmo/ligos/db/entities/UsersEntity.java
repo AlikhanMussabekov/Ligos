@@ -87,4 +87,13 @@ public class UsersEntity implements Serializable {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<AttendanceEntity> attendance = new HashSet<>();
 
+	@Builder.Default
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private Set<TeamUserEntity> teamUserEntities = new HashSet<>();
+
+	@Builder.Default
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private Set<UserMatchEntity> userMatchEntities = new HashSet<>();
 }

@@ -38,4 +38,16 @@ public class TeamEntity implements Serializable {
 	@Column(name = "photo", nullable = true)
 	private byte[] photo;
 
+	@Column(name = "wins")
+	private Integer wins;
+
+	@Column(name = "draws")
+	private Integer draws;
+
+	@Column(name = "defeats")
+	private Integer defeats;
+
+	@OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
+	private Set<TeamUserEntity> teamUserEntities;
+
 }

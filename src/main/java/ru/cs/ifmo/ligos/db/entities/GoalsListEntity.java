@@ -32,5 +32,5 @@ public class GoalsListEntity implements Serializable {
 	private UsersEntity user;
 
 	@Column(name = "time", nullable = false)
-	private Date time;
+	private Integer time;
 }

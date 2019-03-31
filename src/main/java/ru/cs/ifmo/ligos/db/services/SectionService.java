@@ -36,7 +36,6 @@ public class SectionService {
 	private final AgeCategoryRepository ageCategoryRepository;
 	private final UserRepository userRepository;
 	private final SectionReviewRepository sectionReviewRepository;
-	private final AttendanceEntityRepository attendanceEntityRepository;
 
 	@Autowired
 	public SectionService(SectionRepository sectionRepository,
@@ -45,8 +44,7 @@ public class SectionService {
 						  SectionDetailsRepository sectionDetailsRepository,
 						  AgeCategoryRepository ageCategoryRepository,
 						  UserRepository userRepository,
-						  SectionReviewRepository sectionReviewRepository,
-						  AttendanceEntityRepository attendanceEntityRepository) {
+						  SectionReviewRepository sectionReviewRepository) {
 		this.sectionRepository = sectionRepository;
 		this.organizationRepository = organizationRepository;
 		this.addressRepository = addressRepository;
@@ -54,11 +52,9 @@ public class SectionService {
 		this.ageCategoryRepository = ageCategoryRepository;
 		this.userRepository = userRepository;
 		this.sectionReviewRepository = sectionReviewRepository;
-		this.attendanceEntityRepository = attendanceEntityRepository;
 	}
 
 	public ResponseEntity<?> getSections(){
-		//return ResponseEntity.ok(sectionRepository.findTopByRaitingOrderByRaitingDesc((short) 5));
 		return ResponseEntity.ok(sectionRepository.findAll());
 	}
 
@@ -210,7 +206,14 @@ public class SectionService {
 
 			if (section.isPresent()) {
 
-				if (attendanceEntityRepository.existsBySectionAndUser(sectionDetailsRepository.findAllBySection(section.get()).get(),authUser.get())){
+				if (sectionDetailsRepository.findAllBySection(section.get()).get().stream().anyMatch(
+						sectionDetail -> authUser.get().getAttendance().contains(
+								AttendanceEntity.builder()
+										.user(authUser.get())
+										.sectionDetails(sectionDetail)
+								.build()
+						)))
+				{
 
 					SectionReviewEntity result = sectionReviewRepository.save(review);
 

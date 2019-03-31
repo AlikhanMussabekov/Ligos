@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -30,10 +31,6 @@ public class MatchesEntity implements Serializable {
 	@JoinColumn(name = "team_second", nullable = false)
 	private TeamEntity teamSecond;
 
-	@OneToOne(fetch = FetchType.EAGER, optional = false)
-	@JoinColumn(name = "stageid", nullable = false)
-	private StagesEntity stage;
-
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "courtid", nullable = false)
 	private CourtEntity court;
@@ -46,4 +43,7 @@ public class MatchesEntity implements Serializable {
 
 	@Column(name = "goals_second", nullable = false)
 	private Integer goalsSecond;
+
+	@OneToMany(mappedBy = "match", cascade = CascadeType.ALL)
+	private Set<UserMatchEntity> userMatchEntities;
 }
