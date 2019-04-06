@@ -36,7 +36,7 @@ public class MyUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
 		final Optional<UsersEntity> user = userRepository.findByEmail(email);
-		final OrganizationEntity organization = organizationRepository.findByEmail(email).get();
+		final Optional<OrganizationEntity> organization = organizationRepository.findByEmail(email);
 
 		if (user.isPresent()){
 			return User
@@ -48,10 +48,10 @@ public class MyUserDetailsService implements UserDetailsService {
 					.credentialsExpired(false)
 					.disabled(false)
 					.build();
-		} else if (organization != null){
+		} else if (organization.isPresent()){
 			return User
 					.withUsername(email)
-					.password(organization.getPassword())
+					.password(organization.get().getPassword())
 					.authorities(Collections.singletonList(RoleName.ROLE_ORGANIZATION))
 					.accountExpired(false)
 					.accountLocked(false)

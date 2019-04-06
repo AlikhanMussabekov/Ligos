@@ -148,7 +148,7 @@ public class MatchService {
 			userRepository.save(user.get());
 
 			return ResponseEntity.created(null).body(new ApiResponse(true, "User match info successfully added"));
-		}else{
+		} else{
 			throw new CustomException("Incorrect user id", HttpStatus.BAD_REQUEST);
 		}
 
