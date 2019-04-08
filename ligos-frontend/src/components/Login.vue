@@ -4,32 +4,70 @@
 			<div class="modal-wrapper">
 				<div class="modal-container">
 
-					<div>
+					<div class="close-button">
 						<button class="modal-default-button" @click="$emit('close')">
 							<img src="../assets/close.png"/>
 						</button>
 					</div>
 
-					<div class="login-inputs">
+					<div class="login-inputs" v-show="registration">
 
-							<p>
-								<label for="email">Email</label>
-							</p>
-							<p>
-								<input type="email" name="email" id="email" v-model="email"/>
-							</p>
+						<p>
+							<label for="nameReg">Имя</label>
+						</p>
+						<p>
+							<input v-bind:class="failure ? 'fail' : null" type="text" name="name" id="nameReg" v-model="name"/>
+						</p>
 
-							<p>
-								<label for="password">Пароль</label>
-							</p>
-							<p>
-								<input type="password" name="password" id="password" v-model="password"/>
-							</p>
+						<p>
+							<label for="emailReg">Email</label>
+						</p>
+						<p>
+							<input v-bind:class="failure ? 'fail' : null" type="email" name="email" id="emailReg" v-model="email"/>
+						</p>
 
-							<p>
-								<button v-on:click="login">Войти</button>
-							</p>
+						<p>
+							<label for="passwordReg">Пароль</label>
+						</p>
+						<p>
+							<input v-bind:class="failure ? 'fail' : null" type="password" name="password" id="passwordReg" v-model="password"/>
+						</p>
+
+						<p>
+							<button class="login-button" v-on:click="register">Зарегестрироваться</button>
+						</p>
+						<div class="registration">
+							<button class="registration" v-on:click="registration = false">Уже есть аккаунт?</button>
+						</div>
+
 					</div>
+
+					<div class="login-inputs" v-show="!registration">
+
+						<p>
+							<label for="email">Email</label>
+						</p>
+						<p>
+							<input v-bind:class="failure ? 'fail' : null" type="email" name="email" id="email" v-model="email"/>
+						</p>
+
+						<p>
+							<label for="password">Пароль</label>
+						</p>
+						<p>
+							<input v-bind:class="failure ? 'fail' : null" type="password" name="password" id="password" v-model="password"/>
+						</p>
+
+						<p>
+							<button class="login-button" v-on:click="login">Войти</button>
+						</p>
+
+						<div class="registration">
+							<button class="registration" v-on:click="registration = true">Регистрация</button>
+						</div>
+
+					</div>
+
 				</div>
 			</div>
 		</div>
@@ -39,41 +77,59 @@
 <script>
 
 	import axios from 'axios';
+	import DataService from '../services/DataService';
 
 	export default {
 		name: 'Login',
 		data() {
 			return {
+				registration: false,
+				failure: false,
+				name: '',
 				email: '',
 				password: ''
 			}
 		},
 		methods : {
 			login: function () {
-				axios.post('http://localhost:8080/user/signin', null ,
-					{
-						useCredentials: true,
-						params: {
-							'email' : this.email,
-							'password' : this.password
+				DataService.login(this.email, this.password)
+					.then(response => {
+						if (response.status === 200){
+							this.$store.dispatch('SET_TOKEN',response.data['accessToken']);
+							console.log(localStorage.token);
+							this.$emit('close')
+							this.$store.dispatch('SET_LOGGED');
 						}
-					}
-				)
-				.then(response => {
-					console.log(response)
-					if (response.status === 200){
-						localStorage.token = response.data['accessToken']
-						console.log(localStorage.token)
-					}
-				})
-				.catch(e => {
-					if (e.response.status === 401){
-						console.log('Incorrect credentials')
-					}
-				})
+					})
+					.catch(e => {
+						console.log(e);
+						if (e.response.status === 401){
+							console.log('Incorrect credentials')
+							this.failure = true
+						}
+
+					})
 			},
-			logout: function () {
-				delete localStorage.token
+			register: function () {
+
+				if(this.email === null || this.email === "" || this.password === null || this.password === ""){
+
+					this.failure = true
+
+				}else{
+					DataService.register(this.name, this.email, this.password)
+						.then(response => {
+							if (response.status === 201){
+								this.registration = false;
+							}
+						})
+						.catch(e => {
+							if (e.response.status === 401){
+								console.log('Incorrect credentials');
+								this.failure = true
+							}
+						})
+				}
 			}
 		}
 	}
@@ -111,6 +167,10 @@
 		text-align: center;
 	}
 
+	.close-button{
+		position: fixed;
+	}
+
 	.modal-default-button {
 		float: right;
 		background-color: Transparent;
@@ -138,6 +198,20 @@
 	.modal-leave-active .modal-container {
 		-webkit-transform: scale(1.1);
 		transform: scale(1.1);
+	}
+
+	.login-button{
+		color: #51B291;
+		font-size: 15px;
+		background-color: white;
+	}
+
+	.fail {
+		border:  1px solid red;
+	}
+
+	.registration button{
+		color: #213035;
 	}
 
 </style>

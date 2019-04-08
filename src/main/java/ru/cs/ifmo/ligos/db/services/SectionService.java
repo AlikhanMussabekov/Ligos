@@ -3,6 +3,7 @@ package ru.cs.ifmo.ligos.db.services;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -54,12 +55,19 @@ public class SectionService {
 		this.sectionReviewRepository = sectionReviewRepository;
 	}
 
-	public ResponseEntity<?> getSections(){
-		return ResponseEntity.ok(sectionRepository.findAll());
+	public ResponseEntity<?> getSections(Integer count){
+		return ResponseEntity.ok(sectionRepository.findAll(PageRequest.of(0,count)));
 	}
 
 	public ResponseEntity<?> getSectionById(Long id){
-		return ResponseEntity.ok(sectionRepository.findById(id));
+
+		Optional<SectionEntity> section = sectionRepository.findById(id);
+
+		if (section.isPresent()){
+			return ResponseEntity.ok(section.get());
+		}else{
+			throw new CustomException("Incorrect section id", HttpStatus.NOT_FOUND);
+		}
 	}
 
 	public ResponseEntity<?> createSection(EventDTO eventDto, Authentication auth){
@@ -127,7 +135,7 @@ public class SectionService {
 
 					return ResponseEntity.created(location).body(new ApiResponse(true, "Section details successfully created"));
 				}else{
-					throw new CustomException("Trainer email not exists", HttpStatus.BAD_REQUEST);
+					throw new CustomException("Incorrect trainer email", HttpStatus.BAD_REQUEST);
 				}
 
 			}else {
@@ -135,7 +143,7 @@ public class SectionService {
 			}
 
 		}else{
-			throw new CustomException("Section not exists", HttpStatus.BAD_REQUEST);
+			throw new CustomException("Incorrect section id", HttpStatus.NOT_FOUND);
 		}
 
 	}
@@ -145,9 +153,11 @@ public class SectionService {
 
 		if (section.isPresent()){
 			Optional <List<SectionDetailsEntity>> list = sectionDetailsRepository.findAllBySection(section.get());
-			return ResponseEntity.ok(list.get());
+			return ResponseEntity.ok(list.orElseThrow( () ->
+				new CustomException("Not found", HttpStatus.NOT_FOUND)
+			));
 		}else{
-			throw new CustomException("Wrong section id", HttpStatus.BAD_REQUEST);
+			throw new CustomException("Incorrect section id", HttpStatus.NOT_FOUND);
 		}
 	}
 
@@ -179,11 +189,11 @@ public class SectionService {
 					return ResponseEntity.accepted().body(new ApiResponse(true, "User successfully registered to section"));
 
 				}else{
-					throw new CustomException("Incorrect section details id", HttpStatus.BAD_REQUEST);
+					throw new CustomException("Incorrect section details id", HttpStatus.NOT_FOUND);
 				}
 
 			}else{
-				throw new CustomException("Incorrect section id", HttpStatus.BAD_REQUEST);
+				throw new CustomException("Incorrect section id", HttpStatus.NOT_FOUND);
 			}
 
 		}else{
@@ -233,7 +243,7 @@ public class SectionService {
 				}
 
 			} else {
-				throw new CustomException("Incorrect section id", HttpStatus.BAD_REQUEST);
+				throw new CustomException("Incorrect section id", HttpStatus.NOT_FOUND);
 			}
 
 		} else {
@@ -250,7 +260,7 @@ public class SectionService {
 			return ResponseEntity.ok(sectionReviewRepository.findAllBySection(section.get()));
 
 		}else{
-			throw new CustomException("Incorrect section id", HttpStatus.BAD_REQUEST);
+			throw new CustomException("Incorrect section id", HttpStatus.NOT_FOUND);
 		}
 
 	}
@@ -268,11 +278,11 @@ public class SectionService {
 				return ResponseEntity.ok(review.get());
 
 			}else{
-				throw new CustomException("Incorrect section id", HttpStatus.BAD_REQUEST);
+				throw new CustomException("Incorrect section id", HttpStatus.NOT_FOUND);
 			}
 
 		}else{
-			throw new CustomException("Incorrect section id", HttpStatus.BAD_REQUEST);
+			throw new CustomException("Incorrect section id", HttpStatus.NOT_FOUND);
 		}
 
 	}

@@ -16,6 +16,8 @@ import ru.cs.ifmo.ligos.db.services.SectionService;
 import ru.cs.ifmo.ligos.dto.EventDTO;
 import ru.cs.ifmo.ligos.dto.SectionDetailsDTO;
 
+import javax.websocket.server.PathParam;
+
 @RestController
 @RequestMapping("/section")
 public class SectionController {
@@ -27,9 +29,9 @@ public class SectionController {
 		this.sectionService = sectionService;
 	}
 
-	@GetMapping("/all")
-	public ResponseEntity<?> getSections(){
-		return sectionService.getSections();
+	@GetMapping("/all/{count}")
+	public ResponseEntity<?> getSections(@PathVariable("count") Integer count){
+		return sectionService.getSections(count);
 	}
 
 	@PostMapping

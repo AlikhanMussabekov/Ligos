@@ -115,7 +115,7 @@ public class TeamService {
 				}
 
 			}else{
-				throw new CustomException("Incorrect team id", HttpStatus.BAD_REQUEST);
+				throw new CustomException("Incorrect team id", HttpStatus.NOT_FOUND);
 			}
 
 		}else{

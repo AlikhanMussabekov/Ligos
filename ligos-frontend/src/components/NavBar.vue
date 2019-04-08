@@ -8,11 +8,12 @@
 				</router-link>
 			</div>
 			<div class="right">
-				<button class="login-button" v-if="!logged" @click="showLogin = true">
+				<button class="login-button" v-if="!this.$store.getters.GET_LOGGED" @click="showLogin = true">
 					<img class="login" src="../assets/login.png"/>
 				</button>
-				<button class="logout-button" v-if="logged">
-					<img class="login" src="../assets/login.png"/>
+				<button class="login-button" v-if="this.$store.getters.GET_LOGGED" @click="logout">
+					<img class="login" src="../../build/logo.png"/>
+					<h1>logout</h1>
 				</button>
 			</div>
 		</div>
@@ -40,28 +41,37 @@
 	  		Login
 		},
 		data () {
-		return {
-			links: [
-				{
-					id: 0,
-					text: 'Sections',
-					page: '/sections'
-				},
-				{
-					id: 1,
-					text: 'Courts',
-					page: '/courts'
-				},
-				{
-					id: 2,
-					text: 'Teams',
-					page: '/teams'
-				}
-		  	],
-			showLogin: false,
-			logged: false
+			return {
+				links: [
+					{
+						id: 0,
+						text: 'Секции',
+						page: '/sections'
+					},
+					{
+						id: 1,
+						text: 'Площадки',
+						page: '/courts'
+					},
+					{
+						id: 2,
+						text: 'Команды',
+						page: '/teams'
+					}
+				],
+				showLogin: false,
+				isDropdownActive: false,
+			}
+	  },
+		methods:{
+			logout: function () {
+				delete localStorage.token
+				this.$store.dispatch('SET_LOGGED_OUT');
+			},
+			away() {
+				this.isDropdownActive = false;
+			}
 		}
-	  }
 	}
 </script>
 
@@ -121,7 +131,8 @@
 
 	.nav-bar .logo {
 		margin: 10px;
-		width: 300px;
+		width: 100%;
+		max-width: 200px;
 		height: auto;
 	}
 

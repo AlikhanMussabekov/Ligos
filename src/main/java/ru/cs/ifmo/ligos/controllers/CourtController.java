@@ -39,9 +39,9 @@ public class CourtController {
 		this.courtService = courtService;
 	}
 
-	@GetMapping("/all")
-	public ResponseEntity<?> getCourts(){
-		return courtService.getCourts();
+	@GetMapping("/all/{count}")
+	public ResponseEntity<?> getCourts(@PathVariable Integer count){
+		return courtService.getCourts(count);
 	}
 
 	@PostMapping

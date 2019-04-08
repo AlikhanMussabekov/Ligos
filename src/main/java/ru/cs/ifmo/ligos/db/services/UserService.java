@@ -55,7 +55,7 @@ public class UserService {
 
 	public UsersEntity getUser(Long id){
 		return repository.findById(id).orElseThrow( () ->
-			new CustomException("Incorrect user id", HttpStatus.BAD_REQUEST)
+			new CustomException("Incorrect user id", HttpStatus.NOT_FOUND)
 		);
 	}
 
@@ -142,7 +142,7 @@ public class UserService {
 
 	public ResponseEntity<?> getCurrentUser(String email){
 		return ResponseEntity.ok(repository.findByEmail(email)
-				.orElseThrow(() -> new CustomException("User not found",HttpStatus.BAD_REQUEST )));
+				.orElseThrow(() -> new CustomException("User not found",HttpStatus.NOT_FOUND )));
 	}
 
 	void setIsPresent(UsersEntity user, Boolean stat) {

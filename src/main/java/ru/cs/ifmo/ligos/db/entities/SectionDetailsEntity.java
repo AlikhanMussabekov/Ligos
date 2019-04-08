@@ -51,6 +51,7 @@ public class SectionDetailsEntity implements Serializable {
 	@Column(name = "max_users_count", nullable = false)
 	private Integer maxUsersCount;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "sectionDetails", cascade = CascadeType.ALL)
 	private Set<AttendanceEntity> attendance;
 

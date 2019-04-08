@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.cs.ifmo.ligos.db.entities.OrganizationEntity;
 import ru.cs.ifmo.ligos.db.services.OrganizationService;
@@ -59,6 +60,19 @@ public class OrganizationAuthorizationController {
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token")})
 	public ResponseEntity<?> signup(@ApiParam("Signup organization") @RequestBody OrganizationDataDTO user) {
 		return organizationService.signup(modelMapper.map(user, OrganizationEntity.class));
+	}
+
+	@PostMapping(value = "/addTrainer")
+	@Procedure("application/json")
+	@ApiOperation(value = "${OrganizationAuthorizationController.addTrainer}")
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Something went wrong"),
+			@ApiResponse(code = 403, message = "Access denied"),
+			@ApiResponse(code = 422, message = "Email is already in use"),
+			@ApiResponse(code = 500, message = "Expired or invalid JWT token")})
+	public ResponseEntity<?> addTrainer(Authentication auth,
+										@ApiParam("User id") @RequestParam Long userId){
+		return organizationService.addTrainer(auth, userId);
 	}
 
 }

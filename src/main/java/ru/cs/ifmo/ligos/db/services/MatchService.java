@@ -49,7 +49,7 @@ public class MatchService {
 	public ResponseEntity<?> getMatchById(Long id){
 
 		return ResponseEntity.ok().body(matchesRepository.findById(id).orElseThrow(
-				() -> new CustomException("Incorrect match id", HttpStatus.BAD_REQUEST)
+				() -> new CustomException("Incorrect match id", HttpStatus.NOT_FOUND)
 
 		));
 	}
@@ -64,15 +64,15 @@ public class MatchService {
 			MatchesEntity match = modelMapper.map(matchDTO, MatchesEntity.class);
 
 			match.setCourt(courtRepository.findById(matchDTO.getCourtId()).orElseThrow( () ->
-					new CustomException("Incorrect court id", HttpStatus.BAD_REQUEST)
+					new CustomException("Incorrect court id", HttpStatus.NOT_FOUND)
 			));
 
 			match.setTeamFirst(teamRepository.findById(matchDTO.getFirstTeamId()).orElseThrow( () ->
-					new CustomException("Incorrect first team id", HttpStatus.BAD_REQUEST)
+					new CustomException("Incorrect first team id", HttpStatus.NOT_FOUND)
 			));
 
 			match.setTeamSecond(teamRepository.findById(matchDTO.getSecondTeamId()).orElseThrow( () ->
-					new CustomException("Incorrect second team id", HttpStatus.BAD_REQUEST)
+					new CustomException("Incorrect second team id", HttpStatus.NOT_FOUND)
 			));
 
 			MatchesEntity result = matchesRepository.save(match);
@@ -92,9 +92,9 @@ public class MatchService {
 	public ResponseEntity<?> getGoalsByUserId(Long userId){
 		return ResponseEntity.ok().body(goalsListRepository.findAllByUser(
 				userRepository.findById(userId).orElseThrow( () ->
-					new CustomException("Incorrect user id", HttpStatus.BAD_REQUEST)
+					new CustomException("Incorrect user id", HttpStatus.NOT_FOUND)
 				)).orElseThrow( () ->
-					new CustomException("Incorrect user id", HttpStatus.BAD_REQUEST)
+					new CustomException("Incorrect user id", HttpStatus.NOT_FOUND)
 				)
 		);
 	}
@@ -103,11 +103,11 @@ public class MatchService {
 
 		GoalsListEntity goal = modelMapper.map(goalDTO,GoalsListEntity.class);
 		goal.setUser(userRepository.findById(goalDTO.getUserId()).orElseThrow( () ->
-			new CustomException("Incorrect user id", HttpStatus.BAD_REQUEST)
+			new CustomException("Incorrect user id", HttpStatus.NOT_FOUND)
 		));
 
 		goal.setMatch(matchesRepository.findById(goalDTO.getMatchId()).orElseThrow( () ->
-				new CustomException("Incorrect match id", HttpStatus.BAD_REQUEST)
+				new CustomException("Incorrect match id", HttpStatus.NOT_FOUND)
 		));
 
 		goalsListRepository.save(goal);
@@ -119,7 +119,7 @@ public class MatchService {
 	public ResponseEntity<?> getUserMatchInfo(Long userId){
 		return ResponseEntity.ok().body(
 				userRepository.findById(userId).orElseThrow( () ->
-					new CustomException("Incorrect user id", HttpStatus.BAD_REQUEST)
+					new CustomException("Incorrect user id", HttpStatus.NOT_FOUND)
 				).getUserMatchEntities()
 		);
 	}
@@ -128,7 +128,7 @@ public class MatchService {
 													 Long matchId){
 		return ResponseEntity.ok().body(
 				userRepository.findById(userId).orElseThrow( () ->
-						new CustomException("Incorrect user id", HttpStatus.BAD_REQUEST)
+						new CustomException("Incorrect user id", HttpStatus.NOT_FOUND)
 				).getUserMatchEntities().stream().filter(e -> e.getMatch().getId().equals(matchId))
 		);
 	}
@@ -141,7 +141,7 @@ public class MatchService {
 			UserMatchEntity userMatchInfo = modelMapper.map(userMatchDTO, UserMatchEntity.class);
 			userMatchInfo.setUser(user.get());
 			userMatchInfo.setMatch(matchesRepository.findById(userMatchDTO.getMatchId()).orElseThrow( () ->
-				new CustomException("Incorrect match id", HttpStatus.BAD_REQUEST)
+				new CustomException("Incorrect match id", HttpStatus.NOT_FOUND)
 			));
 
 			user.get().getUserMatchEntities().add(userMatchInfo);
@@ -149,7 +149,7 @@ public class MatchService {
 
 			return ResponseEntity.created(null).body(new ApiResponse(true, "User match info successfully added"));
 		} else{
-			throw new CustomException("Incorrect user id", HttpStatus.BAD_REQUEST);
+			throw new CustomException("Incorrect user id", HttpStatus.NOT_FOUND);
 		}
 
 	}

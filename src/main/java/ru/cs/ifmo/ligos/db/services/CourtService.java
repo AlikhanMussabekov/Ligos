@@ -3,6 +3,7 @@ package ru.cs.ifmo.ligos.db.services;
 import jdk.nashorn.internal.runtime.options.Option;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -74,8 +75,8 @@ public class CourtService {
 		}
 	}
 
-	public ResponseEntity<?> getCourts(){
-		return ResponseEntity.ok(courtRepository.findAll());
+	public ResponseEntity<?> getCourts(Integer count){
+		return ResponseEntity.ok(courtRepository.findAll(PageRequest.of(0,count)));
 	}
 
 	public ResponseEntity<?> getCourtById(Long id){
@@ -84,7 +85,7 @@ public class CourtService {
 		if (court.isPresent()){
 			return ResponseEntity.ok(court.get());
 		}else{
-			return ResponseEntity.badRequest().body("Incorrect court id");
+			throw new CustomException("Incorrect court id",HttpStatus.NOT_FOUND);
 		}
 
 	}
@@ -123,7 +124,7 @@ public class CourtService {
 			}
 
 		}else{
-			throw new CustomException("Court not exists", HttpStatus.BAD_REQUEST);
+			throw new CustomException("Incorrect court id", HttpStatus.NOT_FOUND);
 		}
 
 	}
@@ -135,7 +136,7 @@ public class CourtService {
 			Optional <List<CourtPaymentEntity>> list = courtPaymentRepository.findAllByCourt(court.get());
 			return ResponseEntity.ok(list.get());
 		}else{
-			throw new CustomException("Wrong court id", HttpStatus.BAD_REQUEST);
+			throw new CustomException("Incorrect court id", HttpStatus.NOT_FOUND);
 		}
 	}
 
@@ -171,7 +172,7 @@ public class CourtService {
 				return ResponseEntity.accepted().body("Court successfully booked");
 
 			}else{
-				throw new CustomException("Incorrect court id", HttpStatus.BAD_REQUEST);
+				throw new CustomException("Incorrect court id", HttpStatus.NOT_FOUND);
 			}
 
 		}else{
@@ -212,7 +213,7 @@ public class CourtService {
 				}
 
 			} else {
-				throw new CustomException("Incorrect court id", HttpStatus.BAD_REQUEST);
+				throw new CustomException("Incorrect court id", HttpStatus.NOT_FOUND);
 			}
 
 		} else {
@@ -230,7 +231,7 @@ public class CourtService {
 			return ResponseEntity.ok(courtReviewRepository.findAllByCourt(court.get()));
 
 		}else{
-			throw new CustomException("Incorrect court id", HttpStatus.BAD_REQUEST);
+			throw new CustomException("Incorrect court id", HttpStatus.NOT_FOUND);
 		}
 
 	}
@@ -248,11 +249,11 @@ public class CourtService {
 				return ResponseEntity.ok(review.get());
 
 			}else{
-				throw new CustomException("Incorrect review id", HttpStatus.BAD_REQUEST);
+				throw new CustomException("Incorrect review id", HttpStatus.NOT_FOUND);
 			}
 
 		}else{
-			throw new CustomException("Incorrect court id", HttpStatus.BAD_REQUEST);
+			throw new CustomException("Incorrect court id", HttpStatus.NOT_FOUND);
 		}
 
 	}
