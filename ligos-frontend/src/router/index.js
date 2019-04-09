@@ -7,8 +7,9 @@ import Teams from '@/components/Teams'
 import SectionDetails from '@/components/SectionDetails'
 import CourtDetails from '@/components/CourtDetails'
 import PageNotFound from '@/components/PageNotFound'
+import Settings from '@/components/Settings'
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   mode: 'history',
@@ -42,7 +43,13 @@ export default new Router({
       path: '/teams',
       name: 'Teams',
       component: Teams
-    },{
+    },
+    {
+      path: '/settings',
+      name: 'Settings',
+      component: Settings
+    },
+    {
       alias: '*',
       path: '/404',
       name: 'notFound',

@@ -34,7 +34,7 @@
 						{{ parseDate(detail.timeEnd) }}
 					</td>
 					<td>
-						<button @click="book">Записаться</button>
+						<button @click="book(detail.id)">Записаться</button>
 					</td>
 				</tr>
 			</table>
@@ -42,11 +42,29 @@
 		<div v-else>
 			<h1>Нет данных</h1>
 		</div>
-		<div class="reviews" v-if="reviews">
+		<div class="reviews">
 
-		</div>
-		<div class="reviews" v-else>
-			<h1>Нет отзывов</h1>
+			<b-form @submit="onSubmit">
+				<b-form-textarea
+						id="textarea"
+						v-model="text"
+						placeholder="Оставьте отзыв..."
+						required
+						rows="3"
+						max-rows="8"
+				></b-form-textarea>
+
+				<b-button type="submit" variant="primary">Отправить</b-button>
+			</b-form>
+
+			<div v-for="review in reviews">
+				<div class="review-header">
+					<h1>{{review.user.name}}</h1>
+					<span>{{ parseDateComment(review.date) }}</span>
+					<span>Рейтинг: {{ review.raiting }}</span>
+				</div>
+				<span>{{ review.review }}</span>
+			</div>
 		</div>
 	</div>
 </template>
@@ -70,8 +88,29 @@
 				return parseDate.getDay() + '/' + parseDate.getMonth() + ' ' +
 						parseDate.getHours() + ':' + parseDate.getMinutes()
 			},
-			book: function () {
-				alert("booked")
+			parseDateComment: function (date) {
+				let parseDate = new Date(date)
+				return parseDate.getDay() + '/' + parseDate.getMonth() + '/' + parseDate.getFullYear() + ' ' +
+					parseDate.getHours() + ':' + parseDate.getMinutes()
+			},
+			book: function (detailsId) {
+				DataService.registerToSection(this.$route.params.id, detailsId)
+					.then(response => {
+						alert("success");
+						console.log(response)
+					})
+					.catch(e => {
+						console.log(e.response);
+						if (e.response.status === 404){
+							this.$router.push({
+								name: 'notFound'
+							})
+						}else if (e.response.status === 401){
+							alert('Войдите')
+						}else if (e.response.status === 500){
+							alert('Вы уже записаны')
+						}
+					})
 			}
 		},
 		created() {
@@ -88,11 +127,20 @@
 						})
 					}
 
-				})
+				});
 
 			DataService.getSectionDetails(this.$route.params.id)
 				.then(response => {
 					this.details = response.data
+				})
+				.catch(e => {
+					console.log(e.response);
+				})
+
+			DataService.getSectionReviews(this.$route.params.id)
+				.then(response => {
+					this.reviews = response.data;
+					console.log('reviews ' + response.data)
 				})
 				.catch(e => {
 					console.log(e.response);
@@ -110,6 +158,7 @@
 
 	.wrap{
 		display: flex;
+		margin: 20px;
 	}
 
 	.main-info{
@@ -131,8 +180,11 @@
 	}
 
 	.reviews{
-		text-align: center;
-		margin-left: 20px;
+		margin-left: 30px;
+	}
+
+	.review-header{
+		display: list-item;
 	}
 
 </style>

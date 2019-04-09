@@ -6,18 +6,18 @@ import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.Type;
 import org.springframework.format.annotation.NumberFormat;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.io.Serializable;
 import java.util.*;
 
-@Entity
-@Getter
 @Setter
+@Getter
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Table(name = "users", schema = "public", catalog = "ligos")
@@ -80,7 +80,7 @@ public class UsersEntity implements Serializable {
 
 	@Builder.Default
 	@JsonIgnore
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "id.user", cascade = CascadeType.ALL)
 	private Set<AttendanceEntity> attendance = new HashSet<>();
 
 	@Builder.Default
@@ -92,4 +92,8 @@ public class UsersEntity implements Serializable {
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<UserMatchEntity> userMatchEntities = new HashSet<>();
+
+	public void addUserToAttendance(AttendanceEntity attendanceEntity){
+		this.attendance.add(attendanceEntity);
+	}
 }

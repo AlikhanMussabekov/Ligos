@@ -7,6 +7,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -31,7 +32,7 @@ public class SectionDetailsEntity implements Serializable {
 	private AgeCategoryEntity ageCategory;
 
 	@JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "sectionid", nullable = false)
 	private SectionEntity section;
 
@@ -52,7 +53,11 @@ public class SectionDetailsEntity implements Serializable {
 	private Integer maxUsersCount;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "sectionDetails", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "id.sectionDetails", cascade = CascadeType.ALL)
 	private Set<AttendanceEntity> attendance;
+
+	public void addUserToAttendance(AttendanceEntity attendanceEntity){
+		this.attendance.add(attendanceEntity);
+	}
 
 }

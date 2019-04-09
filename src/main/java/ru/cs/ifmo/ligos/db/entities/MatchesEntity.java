@@ -35,7 +35,7 @@ public class MatchesEntity implements Serializable {
 	@JoinColumn(name = "courtid", nullable = false)
 	private CourtEntity court;
 
-	@Column(name = "DATE", nullable = false)
+	@Column(name = "date_at", nullable = false)
 	private Date date;
 
 	@Column(name = "goals_first", nullable = false)

@@ -14,6 +14,7 @@ import ru.cs.ifmo.ligos.db.entities.CourtReviewEntity;
 import ru.cs.ifmo.ligos.db.entities.SectionReviewEntity;
 import ru.cs.ifmo.ligos.db.services.SectionService;
 import ru.cs.ifmo.ligos.dto.EventDTO;
+import ru.cs.ifmo.ligos.dto.ReviewDTO;
 import ru.cs.ifmo.ligos.dto.SectionDetailsDTO;
 
 import javax.websocket.server.PathParam;
@@ -79,7 +80,7 @@ public class SectionController {
 	}
 
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@PostMapping("/{sectionId}/details/{detailsId}/register")
+	@PostMapping("/{sectionId}/details/{sectionDetailsId}/register")
 	@Procedure("application/json")
 	@ApiOperation(value = "${SectionsController.registerToSection}")
 	@ApiResponses(value = {
@@ -87,8 +88,8 @@ public class SectionController {
 			@ApiResponse(code = 403, message = "Access denied"),
 			@ApiResponse(code = 500, message = "Expired or invalid JWT token")})
 	public ResponseEntity<?> registerToSection(Authentication auth,
-											   @ApiParam("Section id") Long sectionId,
-											   @ApiParam("Section Details id") Long sectionDetailsId){
+											   @ApiParam("Section id") @PathVariable Long sectionId,
+											   @ApiParam("Section Details id") @PathVariable Long sectionDetailsId){
 		return sectionService.registerToSection(auth, sectionId, sectionDetailsId);
 	}
 
@@ -97,7 +98,7 @@ public class SectionController {
 	@ApiOperation(value = "${SectionController.addSectionReview}")
 	public ResponseEntity<?> addReview(Authentication auth,
 									   @ApiParam("Section id") @PathVariable Long id,
-									   @ApiParam("Review body") @RequestBody SectionReviewEntity review){
+									   @ApiParam("Review body") @RequestBody ReviewDTO review){
 		return sectionService.addReview(auth, id, review);
 	}
 

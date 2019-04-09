@@ -1,19 +1,19 @@
 package ru.cs.ifmo.ligos.db.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
-@Getter
 @Setter
+@Getter
 @EqualsAndHashCode
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "trainer", schema = "public", catalog = "ligos")
 public class TrainerEntity implements Serializable {
 
@@ -21,7 +21,7 @@ public class TrainerEntity implements Serializable {
 	private Long id;
 
 	@MapsId
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@OneToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "userid", nullable = false)
 	private UsersEntity user;
 

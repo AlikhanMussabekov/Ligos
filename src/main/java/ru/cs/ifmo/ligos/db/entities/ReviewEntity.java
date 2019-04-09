@@ -18,7 +18,9 @@ import java.util.Date;
 public class ReviewEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@SequenceGenerator(name = "review_id_seq", sequenceName = "review_id_seq",allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "review_id_seq")
+	@Column(name = "id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)

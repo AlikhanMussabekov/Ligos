@@ -14,15 +14,13 @@ import ru.cs.ifmo.ligos.db.entities.*;
 import ru.cs.ifmo.ligos.db.repositories.*;
 import ru.cs.ifmo.ligos.dto.ApiResponse;
 import ru.cs.ifmo.ligos.dto.EventDTO;
+import ru.cs.ifmo.ligos.dto.ReviewDTO;
 import ru.cs.ifmo.ligos.dto.SectionDetailsDTO;
 import ru.cs.ifmo.ligos.exception.CustomException;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SectionService {
@@ -161,6 +159,7 @@ public class SectionService {
 		}
 	}
 
+	@Transactional
 	public ResponseEntity<?> registerToSection(Authentication auth,
 											   Long sectionId,
 											   Long sectionDetailsId){
@@ -177,17 +176,15 @@ public class SectionService {
 
 				if (sectionDetails.isPresent()){
 
-					sectionDetails.get()
-							.getAttendance().add(
-								AttendanceEntity.builder()
-								.user(authUser.get())
-								.sectionDetails(sectionDetails.get())
-								.build()
-							);
+					AttendanceEntity attendance = new AttendanceEntity();
+					attendance.setUser(authUser.get());
+					attendance.setSectionDetails(sectionDetails.get());
+
+					sectionDetails.get().addUserToAttendance(attendance);
+
 					sectionDetailsRepository.save(sectionDetails.get());
 
 					return ResponseEntity.accepted().body(new ApiResponse(true, "User successfully registered to section"));
-
 				}else{
 					throw new CustomException("Incorrect section details id", HttpStatus.NOT_FOUND);
 				}
@@ -206,7 +203,7 @@ public class SectionService {
 	@Transactional
 	public ResponseEntity<?> addReview(Authentication auth,
 									   Long sectionId,
-									   SectionReviewEntity review) {
+									   ReviewDTO reviewDTO) {
 
 		Optional<UsersEntity> authUser = userRepository.findByEmail(auth.getName());
 
@@ -216,14 +213,30 @@ public class SectionService {
 
 			if (section.isPresent()) {
 
-				if (sectionDetailsRepository.findAllBySection(section.get()).get().stream().anyMatch(
-						sectionDetail -> authUser.get().getAttendance().contains(
-								AttendanceEntity.builder()
-										.user(authUser.get())
-										.sectionDetails(sectionDetail)
-								.build()
-						)))
+				if (sectionDetailsRepository.findAllBySection(section.get()).orElseThrow(
+						() ->
+							new CustomException("Not section details found", HttpStatus.NOT_FOUND)
+						).stream().anyMatch(sectionDetailsEntity -> {
+							return sectionDetailsEntity.getAttendance().stream().anyMatch(attendanceEntity -> {
+								if (attendanceEntity.getId().getUser().equals(authUser.get())){
+									return true;
+								}else{
+									return false;
+								}
+							});
+						})
+
+				)
 				{
+
+					SectionReviewEntity review = new SectionReviewEntity();
+							review.setReview(reviewDTO.getReview());
+							review.setRaiting(reviewDTO.getRating());
+							review.setDate(new Date());
+							review.setUser(authUser.get());
+							review.setSection(section.get());
+
+
 
 					SectionReviewEntity result = sectionReviewRepository.save(review);
 
@@ -232,7 +245,7 @@ public class SectionService {
 					pathVariableMap.put("reviewId", result.getId());
 
 					URI location = ServletUriComponentsBuilder
-							.fromCurrentContextPath().path("/section/{sectionId}/review/{reviewId}")
+							.fromCurrentContextPath().path("/section/{sectionId}/reviews/{reviewId}")
 							.buildAndExpand(pathVariableMap)
 							.toUri();
 

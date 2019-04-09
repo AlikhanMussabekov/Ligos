@@ -1,5 +1,6 @@
 package ru.cs.ifmo.ligos.db.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,22 +15,28 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@AssociationOverrides({
+		@AssociationOverride(name = "id.user",
+				joinColumns = @JoinColumn(name = "usersid")),
+		@AssociationOverride(name = "id.sectionDetails",
+				joinColumns = @JoinColumn(name = "section_detailsid")) })
 public class AttendanceEntity implements Serializable {
 
-	@Id
-	@ManyToOne
-	@JoinColumn(name = "section_detailsid")
-	private SectionDetailsEntity sectionDetails;
-
-	@Id
-	@ManyToOne
-	@JoinColumn(name = "usersid")
-	private UsersEntity user;
+	@EmbeddedId
+	private AttendanceId id = new AttendanceId();
 
 	@Column(name = "PRESENT", nullable = true)
 	private Boolean present;
 
-	@Column(name = "DATE", nullable = true)
+	@Column(name = "date_at", nullable = true)
 	private Date date;
+
+	public void setUser(UsersEntity user){
+		getId().setUser(user);
+	}
+
+	public void setSectionDetails(SectionDetailsEntity sectionDetails){
+		getId().setSectionDetails(sectionDetails);
+	}
 
 }

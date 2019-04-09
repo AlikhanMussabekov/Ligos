@@ -50,6 +50,17 @@ export default {
 	getSectionDetails(id){
 		return apiClient.get('/section/' + id + '/details')
 	},
+	getSectionReviews(id){
+		return apiClient.get('/section/' + id + '/reviews')
+	},
+	registerToSection(sectionId, detailsId){
+		return apiClient.post('/section/' + sectionId + '/details/' + detailsId + '/register', null,{
+			headers: {
+				'Authorization': 'Bearer ' + store.getters.GET_TOKEN
+			},
+			useCredentials: true
+		})
+	},
 	getCourts(count){
 		return apiClient.get('/court/all/' + count)
 	},
