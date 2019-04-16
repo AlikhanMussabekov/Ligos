@@ -14,8 +14,8 @@
     <div v-if="courts">
       <h1>Площадки</h1>
       <div class="grid">
-        <Section v-for="court in courts" v-bind:key=court.id v-bind:event="court">
-        </Section>
+        <Court v-for="court in courts" v-bind:key=court.id v-bind:event="court">
+        </Court>
       </div>
     </div>
     <div v-else>
@@ -23,7 +23,7 @@
     </div>
 
     <div v-if="teams">
-      <h1>Команды</h1>
+      <h1>Команды</h1>f
       <div class="grid">
         <Section v-for="team in teams" v-bind:key=team.id v-bind:event="team">
         </Section>
@@ -39,9 +39,12 @@
 
   import Section from './Section'
   import DataService from '../services/DataService'
+  import Court from "./Court";
+
   export default {
     name: 'Home',
     components:{
+      Court,
       Section
     },
     data(){

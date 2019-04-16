@@ -9,15 +9,9 @@
 			<table>
 
 				<tr>
-					<td>
-						Возраст от-до
-					</td>
-					<td>
-						Цена
-					</td>
-					<td colspan="2">
-						Время занятия
-					</td>
+					<td>Возраст от-до</td>
+					<td>Цена</td>
+					<td colspan="2">Время занятия</td>
 				</tr>
 
 				<tr v-for="detail in details">
@@ -54,6 +48,10 @@
 						max-rows="8"
 				></b-form-textarea>
 
+				<b-input-group prepend="1" v-bind:append="rating" class="mt-3">
+					<b-form-input v-model="rating" type="range" min="1" max="5"></b-form-input>
+				</b-input-group>
+
 				<b-button type="submit" variant="primary">Отправить</b-button>
 			</b-form>
 
@@ -79,10 +77,23 @@
 			return{
 				section: null,
 				details: null,
-				reviews: null
+				reviews: null,
+				text: '',
+				rating: '5'
 			}
 		},
 		methods:{
+			onSubmit: function(event){
+				event.preventDefault();
+				DataService.addSectionReview(this.$route.params.id, this.text,this.rating)
+					.then(response => {
+						this.text = '';
+						this.getReviews();
+					})
+					.catch(e => {
+						console.log(e)
+					});
+			},
 			parseDate: function (date) {
 				let parseDate = new Date(date)
 				return parseDate.getDay() + '/' + parseDate.getMonth() + ' ' +
@@ -94,10 +105,33 @@
 					parseDate.getHours() + ':' + parseDate.getMinutes()
 			},
 			book: function (detailsId) {
-				DataService.registerToSection(this.$route.params.id, detailsId)
+				if (this.$store.getters.GET_LOGGED){
+					DataService.registerToSection(this.$route.params.id, detailsId)
+						.then(response => {
+							alert("success");
+							console.log(response)
+						})
+						.catch(e => {
+							console.log(e.response);
+							if (e.response.status === 404){
+								this.$router.push({
+									name: 'notFound'
+								})
+							}else if (e.response.status === 401){
+								alert('Произошла ошибка, войдите заново')
+							}else if (e.response.status === 500){
+								alert('Вы уже записаны')
+							}
+						})
+				}else{
+					alert('Войдите')
+				}
+			},
+			getReviews: function () {
+				DataService.getSectionReviews(this.$route.params.id)
 					.then(response => {
-						alert("success");
-						console.log(response)
+						this.reviews = response.data;
+						console.log('reviews ' + response.data)
 					})
 					.catch(e => {
 						console.log(e.response);
@@ -105,10 +139,6 @@
 							this.$router.push({
 								name: 'notFound'
 							})
-						}else if (e.response.status === 401){
-							alert('Войдите')
-						}else if (e.response.status === 500){
-							alert('Вы уже записаны')
 						}
 					})
 			}
@@ -135,21 +165,10 @@
 				})
 				.catch(e => {
 					console.log(e.response);
-				})
+				});
 
-			DataService.getSectionReviews(this.$route.params.id)
-				.then(response => {
-					this.reviews = response.data;
-					console.log('reviews ' + response.data)
-				})
-				.catch(e => {
-					console.log(e.response);
-					if (e.response.status === 404){
-						this.$router.push({
-							name: 'notFound'
-						})
-					}
-				})
+			this.getReviews()
+
 		}
 	}
 </script>

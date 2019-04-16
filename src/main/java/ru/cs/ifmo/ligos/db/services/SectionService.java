@@ -300,4 +300,16 @@ public class SectionService {
 
 	}
 
+	public ResponseEntity<?> mySections(String email){
+		Optional<OrganizationEntity> auth = organizationRepository.findByEmail(email);
+
+		return ResponseEntity.ok( sectionRepository.findByOrganization(auth.orElseThrow(
+				() ->
+					new CustomException("Auth error",HttpStatus.FORBIDDEN)
+		)).orElseThrow( () ->
+							new CustomException("No sections",HttpStatus.NOT_FOUND)
+		) );
+
+	}
+
 }

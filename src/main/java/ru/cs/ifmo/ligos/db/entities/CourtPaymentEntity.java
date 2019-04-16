@@ -1,5 +1,6 @@
 package ru.cs.ifmo.ligos.db.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,6 +25,7 @@ public class CourtPaymentEntity implements Serializable {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "courtid", nullable = false)
 	private CourtEntity court;
@@ -40,9 +42,10 @@ public class CourtPaymentEntity implements Serializable {
 	@Column(name = "status", nullable = false)
 	private Boolean status;
 
-	@Column(name = "date", nullable = false)
+	@Column(name = "date_at", nullable = false)
 	private Date date;
 
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "usersid", nullable = false)
 	private UsersEntity user;

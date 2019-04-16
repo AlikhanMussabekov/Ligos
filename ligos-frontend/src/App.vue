@@ -31,17 +31,17 @@ export default {
   }
 
   #content-wrap {
-    padding-bottom: 4rem;    /* Footer height */
+    padding-bottom: 5rem;    /* Footer height */
   }
 
   #footer{
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 4rem;
+    height: 5rem;
   }
 
   body{
-    margin: 0px;
+    margin: 0;
   }
 </style>

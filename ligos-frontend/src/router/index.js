@@ -8,6 +8,7 @@ import SectionDetails from '@/components/SectionDetails'
 import CourtDetails from '@/components/CourtDetails'
 import PageNotFound from '@/components/PageNotFound'
 import Settings from '@/components/Settings'
+import MyCourts from '@/components/MyCourts'
 
 Vue.use(Router);
 
@@ -48,6 +49,11 @@ export default new Router({
       path: '/settings',
       name: 'Settings',
       component: Settings
+    },
+    {
+      path: '/mycourts',
+      name: 'MyCourts',
+      component: MyCourts
     },
     {
       alias: '*',

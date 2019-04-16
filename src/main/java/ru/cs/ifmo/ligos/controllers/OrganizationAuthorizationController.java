@@ -75,4 +75,10 @@ public class OrganizationAuthorizationController {
 		return organizationService.addTrainer(auth, userId);
 	}
 
+
+	@GetMapping("/me")
+	@PreAuthorize("hasRole('ROLE_ORGANIZATION')")
+	public ResponseEntity<?> getCurrentOrganization(Authentication authentication) {
+		return organizationService.getCurrentOrganization(authentication.getName());
+	}
 }

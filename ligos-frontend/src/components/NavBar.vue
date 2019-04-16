@@ -8,12 +8,13 @@
 				</router-link>
 			</b-col>
 			<b-col cols="2" style="text-align: left">
-				<button class="login-button" v-if="!this.$store.getters.GET_LOGGED" @click="showLogin = true">
+				<button class="login-button float-right" v-if="!this.$store.getters.GET_LOGGED" @click="showLogin = true">
 					<img class="login" src="../assets/login.png"/>
 				</button>
 				<div>
-					<b-dropdown class="m-md-2" v-bind:text="JSON.parse(this.$store.getters.GET_USER).name" v-if="this.$store.getters.GET_LOGGED">
+					<b-dropdown right class="m-md-2 float-right" v-bind:text="JSON.parse(this.$store.getters.GET_USER).name" v-if="this.$store.getters.GET_LOGGED">
 						<b-dropdown-item @click="$router.push({name: 'Settings'})">Настройки</b-dropdown-item>
+						<b-dropdown-item @click="$router.push({name: 'MyCourts'})" v-show="this.$store.getters.GET_TYPE === 'org'">Мои активы</b-dropdown-item>
 						<b-dropdown-divider></b-dropdown-divider>
 						<b-dropdown-item @click="logout">Выйти</b-dropdown-item>
 					</b-dropdown>

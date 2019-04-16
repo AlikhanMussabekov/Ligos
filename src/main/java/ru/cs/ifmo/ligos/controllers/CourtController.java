@@ -15,10 +15,7 @@ import ru.cs.ifmo.ligos.db.repositories.CourtRepository;
 import ru.cs.ifmo.ligos.db.repositories.OrganizationRepository;
 import ru.cs.ifmo.ligos.db.repositories.UserRepository;
 import ru.cs.ifmo.ligos.db.services.CourtService;
-import ru.cs.ifmo.ligos.dto.CourtBookDTO;
-import ru.cs.ifmo.ligos.dto.CourtPaymentDTO;
-import ru.cs.ifmo.ligos.dto.EventDTO;
-import ru.cs.ifmo.ligos.dto.SectionDetailsDTO;
+import ru.cs.ifmo.ligos.dto.*;
 
 import java.util.List;
 
@@ -26,16 +23,10 @@ import java.util.List;
 @RequestMapping("/court")
 public class CourtController {
 
-	private final UserRepository userRepository;
-	private final OrganizationRepository organizationRepository;
 	private final CourtService courtService;
 
 	@Autowired
-	public CourtController(UserRepository userRepository,
-						   OrganizationRepository organizationRepository,
-						   CourtService courtService) {
-		this.userRepository = userRepository;
-		this.organizationRepository = organizationRepository;
+	public CourtController(CourtService courtService) {
 		this.courtService = courtService;
 	}
 
@@ -120,8 +111,14 @@ public class CourtController {
 	@ApiOperation(value = "${CourtController.addCourtReview}")
 	public ResponseEntity<?> addReview(Authentication auth,
 									   @PathVariable Long id,
-									   @RequestBody CourtReviewEntity review){
+									   @RequestBody ReviewDTO review){
 		return courtService.addReview(auth, id, review);
+	}
+
+	@GetMapping("/myCourts")
+	@PreAuthorize("hasRole('ROLE_ORGANIZATION')")
+	public ResponseEntity<?> myCourts(Authentication authentication) {
+		return courtService.myCourts(authentication.getName());
 	}
 
 }

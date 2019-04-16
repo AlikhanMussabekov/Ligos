@@ -8,7 +8,8 @@ export const store = new Vuex.Store({
 	state:{
 		token: localStorage.getItem('token'),
 		logged: localStorage.getItem('token') !== null,
-		user: localStorage.getItem('user')
+		user: localStorage.getItem('user'),
+		type: localStorage.getItem('type')
 	},
 	getters: {
 		GET_LOGGED: state => {
@@ -19,6 +20,9 @@ export const store = new Vuex.Store({
 		},
 		GET_TOKEN: state => {
 			return state.token
+		},
+		GET_TYPE: state => {
+			return state.type
 		}
 	},
 	mutations: {
@@ -36,21 +40,35 @@ export const store = new Vuex.Store({
 		}
 	},
 	actions: {
-		SET_LOGGED({ commit, dispatch }){
-			DataService.whoAmI()
-				.then(response => {
-					//this.('user', JSON.stringify(response.data));
+		SET_LOGGED({ commit, dispatch }, type){
+			if (type === 'org'){
+				localStorage.setItem('type', type);
+				DataService.orgInfo()
+					.then(response =>{
 					dispatch('SET_USER', JSON.stringify(response.data));
 					console.log(response)
-				})
-				.catch(e => {
-					console.log(e)
-				});
+					})
+					.catch(e => {
+						console.log(e)
+					});
+			}
+			else{
+				localStorage.setItem('type', 'user')
+				DataService.whoAmI()
+					.then(response => {
+						dispatch('SET_USER', JSON.stringify(response.data));
+						console.log(response)
+					})
+					.catch(e => {
+						console.log(e)
+					});
+			}
 			commit('SET_LOGGED');
 		},
 		SET_LOGGED_OUT({ commit }){
 			delete localStorage.user;
 			delete localStorage.token;
+			delete localStorage.type;
 			commit('SET_LOGGED_OUT');
 		},
 		SET_USER({ commit }, user){

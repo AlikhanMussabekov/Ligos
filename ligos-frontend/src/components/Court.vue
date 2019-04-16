@@ -1,7 +1,7 @@
 <template>
 	<article v-if="event">
 		<div class="image">
-			<img v-if="event.photo === null" src="../assets/logo.png">
+			<img v-if="event.photo === undefined" src="../assets/logo.png">
 			<img v-else v-bind:src="'data:image/jpeg;base64,'+ event.photo" alt="Sample photo">
 		</div>
 		<div class="text">

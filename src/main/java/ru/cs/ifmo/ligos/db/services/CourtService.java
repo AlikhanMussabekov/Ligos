@@ -12,10 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.cs.ifmo.ligos.db.entities.*;
 import ru.cs.ifmo.ligos.db.repositories.*;
-import ru.cs.ifmo.ligos.dto.ApiResponse;
-import ru.cs.ifmo.ligos.dto.CourtBookDTO;
-import ru.cs.ifmo.ligos.dto.CourtPaymentDTO;
-import ru.cs.ifmo.ligos.dto.EventDTO;
+import ru.cs.ifmo.ligos.dto.*;
 import ru.cs.ifmo.ligos.exception.CustomException;
 
 import java.io.IOException;
@@ -116,7 +113,7 @@ public class CourtService {
 							.fromCurrentContextPath().path("/court/{id}")
 							.buildAndExpand(court.get().getId()).toUri();
 
-					return ResponseEntity.created(location).body(new ApiResponse(true, "Section details successfully created"));
+					return ResponseEntity.created(location).body(new ApiResponse(true, "Court details successfully created"));
 
 
 			}else {
@@ -184,7 +181,7 @@ public class CourtService {
 	@Transactional
 	public ResponseEntity<?> addReview(Authentication auth,
 									   Long courtId,
-									   CourtReviewEntity review) {
+									   ReviewDTO reviewDTO) {
 
 		Optional<UsersEntity> authUser = userRepository.findByEmail(auth.getName());
 
@@ -196,7 +193,14 @@ public class CourtService {
 
 				if(courtPaymentRepository.existsByCourtAndUser(court.get(), authUser.get())){
 
-					CourtReviewEntity result = courtReviewRepository.save(review);
+					CourtReviewEntity newReview = new CourtReviewEntity();
+						newReview.setReview(reviewDTO.getReview());
+						newReview.setRaiting(reviewDTO.getRating());
+						newReview.setDate(new Date());
+						newReview.setUser(authUser.get());
+						newReview.setCourt(court.get());
+
+					CourtReviewEntity result = courtReviewRepository.save(newReview);
 
 					Map<String, Object> pathVariableMap = new HashMap<>();
 					pathVariableMap.put("courtId", courtId);
@@ -255,6 +259,19 @@ public class CourtService {
 		}else{
 			throw new CustomException("Incorrect court id", HttpStatus.NOT_FOUND);
 		}
+
+	}
+
+
+	public ResponseEntity<?> myCourts(String email){
+		Optional<OrganizationEntity> auth = organizationRepository.findByEmail(email);
+
+		return ResponseEntity.ok( courtRepository.findByOrganization(auth.orElseThrow(
+				() ->
+						new CustomException("Auth error",HttpStatus.FORBIDDEN)
+		)).orElseThrow( () ->
+				new CustomException("No court",HttpStatus.NOT_FOUND)
+		) );
 
 	}
 

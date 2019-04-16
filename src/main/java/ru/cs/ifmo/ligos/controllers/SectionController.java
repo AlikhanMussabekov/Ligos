@@ -121,4 +121,10 @@ public class SectionController {
 		return sectionService.getReview(id, reviewId);
 	}
 
+	@GetMapping("/mySections")
+	@PreAuthorize("hasRole('ROLE_ORGANIZATION')")
+	public ResponseEntity<?> mySections(Authentication authentication) {
+		return sectionService.mySections(authentication.getName());
+	}
+
 }

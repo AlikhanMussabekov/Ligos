@@ -127,4 +127,10 @@ public class OrganizationService {
 
 	}
 
+
+	public ResponseEntity<?> getCurrentOrganization(String email){
+		return ResponseEntity.ok(repository.findByEmail(email)
+					.orElseThrow(() -> new CustomException("Organization not found",HttpStatus.NOT_FOUND )));
+
+	}
 }

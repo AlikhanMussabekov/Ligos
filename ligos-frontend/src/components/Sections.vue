@@ -22,7 +22,7 @@
       }
     },
     created() {
-      DataService.getSections(7)
+      DataService.getSections(20)
               .then(response => {
                 this.sections = response.data.content;
                 console.log(this.sections)
